@@ -1,0 +1,38 @@
+{
+  "name": "minishop",
+  "version": "1.0.0",
+  "description": "A simple e-commerce system for managing products and orders",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "system",
+    "shop",
+    "mini",
+    "e-commerce",
+    "products",
+    "arabic"
+  ],
+  "author": "Walid",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.1",
+    "express": "^5.2.1",
+    "jest": "^30.3.0",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2",
+    "vite": "^6.4.2"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/**/*.js"
+    ]
+  }
+}

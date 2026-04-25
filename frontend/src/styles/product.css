@@ -1,0 +1,15 @@
+/*
+ * Product Stylesheet
+ * 
+ * Responsibilities:
+ * - Define styles specific to the product and transaction screens.
+ * - Ensure consistent layout and width for product-related components.
+ * 
+ * Features:
+ * - Full-width layout for transaction and product lists.
+ */
+
+.transaction-screen,
+.product-list {
+  width: 100%;
+}
