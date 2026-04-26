@@ -47,9 +47,10 @@ The frontend is built using React and provides the user interface for interactin
 The project includes test files for both the backend and frontend to ensure functionality:
 
 - **Backend Tests**:
-  - `test_api.test.js`
-  - `test_database.js`
-- **Frontend Tests**: (To be implemented)
+  - `products.test.js`
+  - `transactions.test.js`
+- **Frontend Tests**: 
+  - `components.test.jsx`
 
 ## How to Run the Project
 
