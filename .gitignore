@@ -19,3 +19,4 @@ backend/database/minishop.db
 # OS/editor files
 .DS_Store
 Thumbs.db
+.aider*
