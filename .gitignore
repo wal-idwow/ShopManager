@@ -20,3 +20,7 @@ backend/database/minishop.db
 .DS_Store
 Thumbs.db
 .aider*
+
+# Internal planning files (local use only)
+TODO_plan_*.md
+GEMINI.md
