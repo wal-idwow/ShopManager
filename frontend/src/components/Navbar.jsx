@@ -1,14 +1,14 @@
 /**
  * Navbar Component
- * 
+ *
  * Responsibilities:
  * - Render the application title and tagline.
  * - Provide navigation links to Home, Products, and Transactions pages.
  * - Include buttons to toggle language and theme settings.
- * 
+ *
  * Props:
  * - None (uses context for UI settings).
- * 
+ *
  * Context:
  * - `t`: Function for translations.
  * - `language`: Current language setting.
@@ -17,7 +17,7 @@
  * - `toggleTheme`: Function to toggle the theme.
  */
 
-import React from 'react'; // Import React for creating the component 
+import React from 'react'; // Import React for creating the component
 import { NavLink } from 'react-router-dom'; // Import Link component from react-router-dom for navigation between pages
 import { useUiSettings } from '../context/UiSettingsContext';
 
@@ -49,10 +49,16 @@ const Navbar = () => {
           <NavLink to="/" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
             {t('home')}
           </NavLink>
-          <NavLink to="/products" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+          <NavLink
+            to="/products"
+            className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}
+          >
             {t('products')}
           </NavLink>
-          <NavLink to="/transactions" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+          <NavLink
+            to="/transactions"
+            className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}
+          >
             {t('transactions')}
           </NavLink>
         </div>
@@ -62,4 +68,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

@@ -31,41 +31,41 @@ app.use('/transactions', transactionRoutes); // Route for transaction-related op
 
 // Health check endpoint
 app.get('/', (req, res) => {
-    res.json({ message: 'MiniShop backend is running' }); // Respond with a simple JSON message
+  res.json({ message: 'MiniShop backend is running' }); // Respond with a simple JSON message
 });
 
 let server;
 
 // Start the server only when this file is run directly.
 if (require.main === module) {
-    const PORT = process.env.PORT || 3000; // Use the port from environment variables or default to 3000
-    server = http.createServer(app);
+  const PORT = process.env.PORT || 3000; // Use the port from environment variables or default to 3000
+  server = http.createServer(app);
 
-    server.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`); // Log the server start message
-    });
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`); // Log the server start message
+  });
 
-    server.on('error', (error) => {
-        console.error('Server failed to start:', error); // Log server errors
-    });
+  server.on('error', (error) => {
+    console.error('Server failed to start:', error); // Log server errors
+  });
 
-    // Handle graceful shutdown on SIGINT (Ctrl+C)
-    process.on('SIGINT', () => {
-        if (server) {
-            server.close(() => {
-                console.log('HTTP server closed.'); // Log server closure
-            });
-        }
-    });
+  // Handle graceful shutdown on SIGINT (Ctrl+C)
+  process.on('SIGINT', () => {
+    if (server) {
+      server.close(() => {
+        console.log('HTTP server closed.'); // Log server closure
+      });
+    }
+  });
 
-    // Handle graceful shutdown on SIGTERM (termination signal)
-    process.on('SIGTERM', () => {
-        if (server) {
-            server.close(() => {
-                console.log('HTTP server closed.'); // Log server closure
-            });
-        }
-    });
+  // Handle graceful shutdown on SIGTERM (termination signal)
+  process.on('SIGTERM', () => {
+    if (server) {
+      server.close(() => {
+        console.log('HTTP server closed.'); // Log server closure
+      });
+    }
+  });
 }
 
 // Export app for testing purposes

@@ -1,12 +1,12 @@
 /**
  * HomeScreen Component
- * 
+ *
  * Responsibilities:
  * - Serve as the landing page for the Mini Shop application.
  * - Display key metrics such as product count, total stock, and transaction count.
  * - Provide navigation buttons for quick access to transactions and products.
  * - Highlight low-stock products and recent transactions.
- * 
+ *
  * Features:
  * - Fetch and display product and transaction data from the API.
  * - Calculate and display total stock and low-stock products.
@@ -124,7 +124,11 @@ const HomeScreen = () => {
               <p className="section-kicker">{t('inventorySnapshot')}</p>
               <h2>{t('topProducts')}</h2>
             </div>
-            <button type="button" className="btn btn-secondary" onClick={() => navigate('/products')}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => navigate('/products')}
+            >
               {t('viewProducts')}
             </button>
           </div>
@@ -133,7 +137,9 @@ const HomeScreen = () => {
               <div key={product.id} className="mini-list-row">
                 <div>
                   <strong>{product.name}</strong>
-                  <p>${Number(product.sell_price).toFixed(2)} {t('sellingPrice')}</p>
+                  <p>
+                    ${Number(product.sell_price).toFixed(2)} {t('sellingPrice')}
+                  </p>
                 </div>
                 <span className={`status-badge ${Number(product.stock) <= 5 ? 'low' : 'healthy'}`}>
                   {product.stock} {t('inStock')}
@@ -150,7 +156,11 @@ const HomeScreen = () => {
               <p className="section-kicker">{t('recentActivity')}</p>
               <h2>{t('latestTransactions')}</h2>
             </div>
-            <button type="button" className="btn btn-secondary" onClick={() => navigate('/transactions')}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => navigate('/transactions')}
+            >
               {t('viewTransactions')}
             </button>
           </div>
@@ -158,7 +168,9 @@ const HomeScreen = () => {
             {latestTransactions.map((transaction) => (
               <div key={transaction.id} className="mini-list-row">
                 <div>
-                  <strong>{transaction.transaction_type === 'sale' ? t('sale') : t('purchase')}</strong>
+                  <strong>
+                    {transaction.transaction_type === 'sale' ? t('sale') : t('purchase')}
+                  </strong>
                   <p>{new Date(transaction.timestamp).toLocaleString()}</p>
                 </div>
                 <span>${Number(transaction.total_price).toFixed(2)}</span>

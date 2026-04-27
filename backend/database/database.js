@@ -1,12 +1,12 @@
 /**
  * Database Connection and Management
- * 
+ *
  * Responsibilities:
  * - Establish and manage the SQLite database connection.
  * - Create necessary tables for the MiniShop application.
  * - Populate the database with sample data (optional).
  * - Handle database initialization and graceful shutdown.
- * 
+ *
  * Main Functions:
  * - `initializeDatabase()`: Initializes the database by creating tables and optionally populating data.
  * - `createTables()`: Creates the `products` and `transactions` tables if they do not exist.
@@ -21,17 +21,17 @@ const dbPath = path.resolve(__dirname, 'minishop.db');
 
 // Validate database path
 if (!dbPath) {
-    console.error('Database path is invalid.');
-    process.exit(1);
+  console.error('Database path is invalid.');
+  process.exit(1);
 }
 
 // Global error handlers --------------------------------
 process.on('uncaughtException', (err) => {
-    console.error('Unhandled Exception:', err);
+  console.error('Unhandled Exception:', err);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 //---------------------------------------------------
 
@@ -48,14 +48,14 @@ initializeDatabase();
 
 // Function to initialize the database
 function initializeDatabase() {
-    createTables(); // Create necessary tables
-    // populateProducts(); // Uncomment to populate sample data
-    // populateTransactions();
+  createTables(); // Create necessary tables
+  // populateProducts(); // Uncomment to populate sample data
+  // populateTransactions();
 }
 
 // Function to create necessary tables
 function createTables() {
-    const createProductsTable = `
+  const createProductsTable = `
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
@@ -66,7 +66,7 @@ function createTables() {
         );
     `;
 
-    const createTransactionsTable = `
+  const createTransactionsTable = `
         CREATE TABLE IF NOT EXISTS transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             product_id INTEGER NOT NULL,
@@ -78,87 +78,85 @@ function createTables() {
         );
     `;
 
-    db.exec(createProductsTable);
-    console.log('Products table created or already exists.');
+  db.exec(createProductsTable);
+  console.log('Products table created or already exists.');
 
-    db.exec(createTransactionsTable);
-    console.log('Transactions table created or already exists.');
+  db.exec(createTransactionsTable);
+  console.log('Transactions table created or already exists.');
 }
 
 // Function to populate the database with products
 function populateProducts() {
-    const products = [
-        ['Product A', 10.0, 15.0, 100],
-        ['Product B', 20.0, 30.0, 50],
-        ['Product C', 5.0, 8.0, 200]
-    ];
+  const products = [
+    ['Product A', 10.0, 15.0, 100],
+    ['Product B', 20.0, 30.0, 50],
+    ['Product C', 5.0, 8.0, 200],
+  ];
 
-    const insertProduct = db.prepare(
-        'INSERT OR IGNORE INTO products (name, buy_price, sell_price, stock) VALUES (?, ?, ?, ?)'
-    );
+  const insertProduct = db.prepare(
+    'INSERT OR IGNORE INTO products (name, buy_price, sell_price, stock) VALUES (?, ?, ?, ?)'
+  );
 
-    products.forEach((product) => {
-        insertProduct.run(product);
-        console.log('Sample product inserted or skipped:', product);
-    });
+  products.forEach((product) => {
+    insertProduct.run(product);
+    console.log('Sample product inserted or skipped:', product);
+  });
 }
 
 // Function to populate the database with transactions
 function populateTransactions() {
-    const transactions = [
-        [1, 'sale', 10, 150.0],
-        [2, 'purchase', 20, 600.0],
-        [3, 'sale', 5, 40.0]
-    ];
+  const transactions = [
+    [1, 'sale', 10, 150.0],
+    [2, 'purchase', 20, 600.0],
+    [3, 'sale', 5, 40.0],
+  ];
 
-    const insertTransaction = db.prepare(
-        'INSERT INTO transactions (product_id, transaction_type, quantity, total_price) VALUES (?, ?, ?, ?)'
-    );
+  const insertTransaction = db.prepare(
+    'INSERT INTO transactions (product_id, transaction_type, quantity, total_price) VALUES (?, ?, ?, ?)'
+  );
 
-    transactions.forEach((transaction) => {
-        try {
-            insertTransaction.run(transaction);
-            console.log('Sample transaction inserted:', transaction);
-        } catch (err) {
-            console.error('Error inserting transaction:', err.message);
-        }
-    });
+  transactions.forEach((transaction) => {
+    try {
+      insertTransaction.run(transaction);
+      console.log('Sample transaction inserted:', transaction);
+    } catch (err) {
+      console.error('Error inserting transaction:', err.message);
+    }
+  });
 }
 
 let isClosed = false;
 
 // Function to close the database connection gracefully
 function closeDatabase(signal) {
-    if (isClosed) {
-        return;
-    }
+  if (isClosed) {
+    return;
+  }
 
-    isClosed = true;
-    if (signal) {
-        console.log(`Received ${signal}. Shutting down database connection...`);
-    } else {
-        console.log('Closing database connection...');
-    }
+  isClosed = true;
+  if (signal) {
+    console.log(`Received ${signal}. Shutting down database connection...`);
+  } else {
+    console.log('Closing database connection...');
+  }
 
-    db.close();
-    console.log('Database connection closed.');
+  db.close();
+  console.log('Database connection closed.');
 }
 
 // Handle process signals for graceful shutdown
 process.on('SIGINT', () => {
-    closeDatabase('SIGINT');
-    process.exit(0);
+  closeDatabase('SIGINT');
+  process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-    closeDatabase('SIGTERM');
-    process.exit(0);
+  closeDatabase('SIGTERM');
+  process.exit(0);
 });
 
 process.on('exit', () => {
-    closeDatabase();
+  closeDatabase();
 });
 
 module.exports = db;
-
-

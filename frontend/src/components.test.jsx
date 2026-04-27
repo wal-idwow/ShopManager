@@ -122,7 +122,9 @@ describe('ProductList', () => {
   });
 
   it('renders table headers and product rows', () => {
-    renderWithProviders(<ProductList products={products} onEdit={jest.fn()} onDelete={jest.fn()} />);
+    renderWithProviders(
+      <ProductList products={products} onEdit={jest.fn()} onDelete={jest.fn()} />
+    );
 
     expect(screen.getByRole('columnheader', { name: 'ID' })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: 'Actions' })).toBeInTheDocument();
@@ -157,7 +159,9 @@ describe('TransactionCard', () => {
     expect(getProductById).toHaveBeenCalledWith(4);
     expect(screen.getByText('Sale')).toHaveClass('status-badge', 'sale');
     expect(screen.getByText('$19.50')).toBeInTheDocument();
-    expect(screen.getByText(new Date(transaction.timestamp).toLocaleDateString())).toBeInTheDocument();
+    expect(
+      screen.getByText(new Date(transaction.timestamp).toLocaleDateString())
+    ).toBeInTheDocument();
   });
 
   it('falls back to the unknown-product label when the product lookup fails', async () => {
@@ -182,7 +186,9 @@ describe('TransactionForm', () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
     getProducts.mockResolvedValue(productOptions);
 
-    renderWithProviders(<TransactionForm onSubmit={onSubmit} initialType="sale" title="Quick Sale" />);
+    renderWithProviders(
+      <TransactionForm onSubmit={onSubmit} initialType="sale" title="Quick Sale" />
+    );
 
     expect(await screen.findByRole('heading', { name: 'Quick Sale' })).toBeInTheDocument();
     expect(await screen.findByRole('option', { name: 'Sugar (8 in stock)' })).toBeInTheDocument();

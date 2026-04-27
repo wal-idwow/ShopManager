@@ -1,10 +1,10 @@
 /**
  * TransactionCard Component
- * 
+ *
  * Responsibilities:
  * - Display transaction details including product name, type, quantity, and total price.
  * - Fetch and display the product name based on the product ID.
- * 
+ *
  * Props:
  * - `transaction`: Object containing transaction details (id, product_id, transaction_type, quantity, total_price, timestamp).
  */
@@ -43,11 +43,17 @@ const TransactionCard = ({ transaction }) => {
   return (
     <tr>
       <td>#{transaction.id}</td>
-      <td>{transaction.timestamp ? new Date(transaction.timestamp).toLocaleDateString() : t('notAvailable')}</td>
+      <td>
+        {transaction.timestamp
+          ? new Date(transaction.timestamp).toLocaleDateString()
+          : t('notAvailable')}
+      </td>
       <td className="cell-strong">{productName || t('loading')}</td>
       <td>{transaction.product_id ?? t('notAvailable')}</td>
       <td>
-        <span className={`status-badge ${transaction.transaction_type === 'sale' ? 'sale' : 'purchase'}`}>
+        <span
+          className={`status-badge ${transaction.transaction_type === 'sale' ? 'sale' : 'purchase'}`}
+        >
           {transaction.transaction_type === 'sale' ? t('sale') : t('purchase')}
         </span>
       </td>
@@ -59,12 +65,12 @@ const TransactionCard = ({ transaction }) => {
 
 /**
  * TransactionForm Component
- * 
+ *
  * Responsibilities:
  * - Provide a form to record new transactions.
  * - Validate user input and handle form submission.
  * - Fetch and display available products for selection.
- * 
+ *
  * Props:
  * - `onSubmit`: Function to handle form submission.
  * - `initialType`: Initial transaction type (default: 'purchase').
@@ -144,7 +150,9 @@ const TransactionForm = ({ onSubmit, initialType = 'purchase', title = 'Record T
       const refreshedProducts = await getProducts();
       setProducts(refreshedProducts);
       setProductName((currentValue) => {
-        const selectedStillExists = refreshedProducts.some((product) => product.name === currentValue);
+        const selectedStillExists = refreshedProducts.some(
+          (product) => product.name === currentValue
+        );
         if (selectedStillExists) {
           return currentValue;
         }
@@ -202,7 +210,11 @@ const TransactionForm = ({ onSubmit, initialType = 'purchase', title = 'Record T
         </div>
       </div>
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary" disabled={isSubmitting || products.length === 0}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isSubmitting || products.length === 0}
+        >
           {isSubmitting ? t('saving') : type === 'sale' ? t('makeSale') : t('makePurchase')}
         </button>
       </div>

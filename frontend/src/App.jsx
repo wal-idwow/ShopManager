@@ -1,11 +1,11 @@
 /**
  * App Component
- * 
+ *
  * Responsibilities:
  * - Serve as the root component of the application.
  * - Define the main layout, including the Navbar and routing structure.
  * - Render different screens based on the current route.
- * 
+ *
  * Routes:
  * - `/`: Renders the `HomeScreen` component.
  * - `/products`: Renders the `ProductScreen` component for listing products.
@@ -20,7 +20,6 @@ import Navbar from './components/Navbar';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import TransactionScreen from './screens/TransactionScreen';
-
 
 const App = () => {
   return (
@@ -43,4 +42,3 @@ const App = () => {
 };
 
 export default App;
-

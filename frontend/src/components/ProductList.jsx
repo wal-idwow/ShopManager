@@ -1,10 +1,10 @@
 /**
  * ProductList Component
- * 
+ *
  * Responsibilities:
  * - Display a list of products using the `ProductCard` component.
  * - Render a message if no products are available.
- * 
+ *
  * Props:
  * - `products`: Array of product objects to display.
  * - `onDelete`: Function to handle deleting a product.
@@ -41,12 +41,7 @@ const ProductList = ({ products, onDelete, onEdit }) => {
         <tbody>
           {/* Render a ProductCard for each product in the list */}
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onDelete={onDelete}
-              onEdit={onEdit}
-            />
+            <ProductCard key={product.id} product={product} onDelete={onDelete} onEdit={onEdit} />
           ))}
         </tbody>
       </table>

@@ -37,7 +37,9 @@ const ProductCard = ({ product, onDelete, onEdit }) => {
 
       {/* Display product stock with status badge */}
       <td>
-        <span className={stockClassName}>{product.stock} {t('inStock')}</span>
+        <span className={stockClassName}>
+          {product.stock} {t('inStock')}
+        </span>
       </td>
 
       {/* Display action buttons for editing and deleting the product */}
@@ -57,4 +59,3 @@ const ProductCard = ({ product, onDelete, onEdit }) => {
 
 // Export the ProductCard component as the default export of this module
 export default ProductCard;
-

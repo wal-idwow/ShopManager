@@ -1,12 +1,12 @@
 /**
  * ProductScreen Component
- * 
+ *
  * Responsibilities:
  * - Display a list of products with options to add, edit, or delete products.
  * - Provide a form for creating or editing products based on the presence of an ID in the URL.
  * - Handle API calls for fetching, creating, updating, and deleting products.
  * - Validate form inputs and display error messages for invalid data or API failures.
- * 
+ *
  * Features:
  * - Controlled form fields for product details (name, buy price, sell price, stock).
  * - Conditional rendering for product list view and product form view.
@@ -15,8 +15,15 @@
 
 import React, { useState, useEffect } from 'react'; // Import necessary hooks and components
 import { useParams, useNavigate, useLocation } from 'react-router-dom'; // Import hooks for routing
+import { useQuery, useQueryClient } from 'react-query'; // Import React Query hooks for data fetching and caching
 import ProductList from '../components/ProductList'; // Import ProductList component to display the list of products
-import { getProducts, deleteProduct, createProduct, updateProduct, getProductById } from '../services/api'; // Import API functions for product operations
+import {
+  getProducts,
+  deleteProduct,
+  createProduct,
+  updateProduct,
+  getProductById,
+} from '../services/api'; // Import API functions for product operations
 import { useUiSettings } from '../context/UiSettingsContext';
 
 // ProductScreen component to handle both product listing and product form for creating/editing products
@@ -26,8 +33,16 @@ const ProductScreen = () => {
   const location = useLocation(); // Hook to get the current location
   const { t } = useUiSettings();
 
+  // Get query client for manual cache invalidation
+  const queryClient = useQueryClient();
+
+  // Fetch products using React Query's useQuery hook - provides caching and automatic refetching
+  const { data: products = [] } = useQuery('products', getProducts, {
+    staleTime: 1000 * 60 * 5, // Cache products for 5 minutes
+    cacheTime: 1000 * 60 * 10, // Keep unused data for 10 minutes
+  });
+
   // State variables to manage products and form fields
-  const [products, setProducts] = useState([]); // State to hold the list of products
   const [name, setName] = useState(''); // State to hold the name of the product being created or edited
   const [buyPrice, setBuyPrice] = useState('');
   const [sellPrice, setSellPrice] = useState('');
@@ -35,39 +50,22 @@ const ProductScreen = () => {
   const [error, setError] = useState(null);
   const isListView = location.pathname === '/products';
 
-  // Fetch the list of products when the component mounts
+  // Fetch product details if in edit mode using React Query
+  const { data: editProduct } = useQuery(['product', id], () => getProductById(id), {
+    enabled: !!id, // Only fetch if id exists (in edit mode)
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 10,
+  });
+
+  // Populate form fields when editing a product
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Fetch product details if in edit mode
-  useEffect(() => {
-    if (id) {
-      const fetchProduct = async () => {
-        try {
-          const product = await getProductById(id);
-          setName(product.name);
-          setBuyPrice(product.buy_price);
-          setSellPrice(product.sell_price);
-          setStock(product.stock);
-        } catch (error) {
-          console.error('Error fetching product:', error);
-          setError(t('failedLoadProductDetails'));
-        }
-      };
-
-      fetchProduct();
+    if (editProduct) {
+      setName(editProduct.name);
+      setBuyPrice(editProduct.buy_price);
+      setSellPrice(editProduct.sell_price);
+      setStock(editProduct.stock);
     }
-  }, [id, t]);
+  }, [editProduct]);
 
   // Handle deleting a product
   const handleDelete = async (id) => {
@@ -77,8 +75,8 @@ const ProductScreen = () => {
 
     try {
       await deleteProduct(id);
-      const updatedProducts = await getProducts();
-      setProducts(updatedProducts);
+      // Invalidate the products query cache to trigger automatic refetch
+      queryClient.invalidateQueries('products');
     } catch (error) {
       console.error('Error deleting product:', error);
       setError(error.response?.data?.error || t('failedDeleteProduct'));
@@ -127,8 +125,8 @@ const ProductScreen = () => {
       } else {
         await createProduct(productData);
       }
-      const updatedProducts = await getProducts();
-      setProducts(updatedProducts);
+      // Invalidate the products query cache to trigger automatic refetch
+      queryClient.invalidateQueries('products');
       setName('');
       setBuyPrice('');
       setSellPrice('');
@@ -149,7 +147,9 @@ const ProductScreen = () => {
             <p className="section-kicker">{t('inventory')}</p>
             <h2>{t('productList')}</h2>
           </div>
-          <button type="button" className="btn btn-primary" onClick={handleAddProduct}>{t('addProduct')}</button>
+          <button type="button" className="btn btn-primary" onClick={handleAddProduct}>
+            {t('addProduct')}
+          </button>
         </div>
         {error && <p className="error-banner">{error}</p>}
         <ProductList products={products} onDelete={handleDelete} onEdit={handleEdit} />
@@ -210,8 +210,12 @@ const ProductScreen = () => {
           </div>
         </div>
         <div className="form-actions">
-          <button type="submit" className="btn btn-primary">{id ? t('updateProduct') : t('addProduct')}</button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/products')}>{t('backToList')}</button>
+          <button type="submit" className="btn btn-primary">
+            {id ? t('updateProduct') : t('addProduct')}
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate('/products')}>
+            {t('backToList')}
+          </button>
         </div>
       </form>
     </section>
@@ -220,4 +224,3 @@ const ProductScreen = () => {
 
 // Export the ProductScreen component as the default export of this module
 export default ProductScreen;
-

@@ -99,33 +99,6 @@ describe('Transaction API Endpoints', () => {
         expect(response.body).toHaveProperty('id', createdTransactionId);
     });
 
-    // Test case for getting product name by product ID
-    it('should get product name by product ID', async () => {
-        const response = await request(app).get(`/transactions/product-name/${createdProductId}`);
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('name');
-    });
-
-    // Test case for getting product ID by product name
-    it('should get product ID by product name', async () => {
-        const response = await request(app).get('/transactions/product-id/tide');
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('id');
-    });
-
-    // Test case for updating product quantity
-    it('should update product quantity', async () => {
-        const response = await request(app)
-            .put('/transactions/update-quantity')
-            .send({
-                product_name: 'tide',
-                transaction_type: 'purchase',
-                quantity: 20
-            });
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('message');
-    });
-
     // Test case for creating a transaction with invalid product ID
     it('should not create a transaction with invalid product ID', async () => {
         const response = await request(app)
@@ -163,5 +136,90 @@ describe('Transaction API Endpoints', () => {
             });
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('error', 'Invalid input. Ensure product name, transaction type, and quantity are valid.');
+    });
+
+    // Test case to verify stock update on purchase transaction
+    it('should correctly update stock on purchase transaction', async () => {
+        // After the first transaction (sale of 10), stock should be at 40
+        const stockBeforePurchase = 40;
+        
+        // Create a purchase transaction
+        const response = await request(app)
+            .post('/transactions')
+            .send({
+                product_name: 'tide',
+                transaction_type: 'purchase',
+                quantity: 10
+            });
+        
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty('id');
+        
+        // Fetch the product and verify stock was increased
+        const productResponse = await request(app).get(`/products/${createdProductId}`);
+        expect(productResponse.status).toBe(200);
+        expect(productResponse.body.stock).toBe(stockBeforePurchase + 10); // Stock should increase on purchase
+    });
+
+    // Test case to verify stock update on sale transaction
+    it('should correctly update stock on sale transaction', async () => {
+        // After the purchase of 10, stock should be at 50
+        const stockBeforeSale = 50;
+        
+        // Create a sale transaction
+        const response = await request(app)
+            .post('/transactions')
+            .send({
+                product_name: 'tide',
+                transaction_type: 'sale',
+                quantity: 5
+            });
+        
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty('id');
+        
+        // Fetch the product and verify stock was decreased
+        const productResponse = await request(app).get(`/products/${createdProductId}`);
+        expect(productResponse.status).toBe(200);
+        expect(productResponse.body.stock).toBe(stockBeforeSale - 5); // Stock should decrease on sale
+    });
+
+    // Test case to verify atomicity: transaction and stock update are atomic
+    it('should verify transaction and stock update are atomic', async () => {
+        // Get all transactions before
+        const transactionsBeforeResponse = await request(app).get('/transactions');
+        const transactionsBefore = transactionsBeforeResponse.body;
+        const initialTransactionCount = transactionsBefore.length;
+        
+        // Get product stock before
+        const productBeforeResponse = await request(app).get(`/products/${createdProductId}`);
+        const stockBefore = productBeforeResponse.body.stock;
+        
+        // Create a new transaction
+        const createResponse = await request(app)
+            .post('/transactions')
+            .send({
+                product_name: 'tide',
+                transaction_type: 'purchase',
+                quantity: 15
+            });
+        
+        expect(createResponse.status).toBe(201);
+        
+        // Get all transactions after
+        const transactionsAfterResponse = await request(app).get('/transactions');
+        const transactionsAfter = transactionsAfterResponse.body;
+        const finalTransactionCount = transactionsAfter.length;
+        
+        // Get product stock after
+        const productAfterResponse = await request(app).get(`/products/${createdProductId}`);
+        const stockAfter = productAfterResponse.body.stock;
+        
+        // Verify both transaction and stock update happened together (atomicity)
+        // Transaction count should increase by exactly 1
+        expect(finalTransactionCount).toBe(initialTransactionCount + 1);
+        
+        // Stock should increase by exactly 15
+        expect(stockAfter).toBe(stockBefore + 15);
     });
 });

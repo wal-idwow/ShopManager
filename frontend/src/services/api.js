@@ -1,11 +1,11 @@
 /**
  * API Service Module
- * 
+ *
  * Responsibilities:
  * - Provide functions to interact with the backend API for managing products and transactions.
  * - Handle HTTP requests and responses using Axios.
  * - Centralize API endpoints and error handling.
- * 
+ *
  * Features:
  * - Axios instance with a configurable base URL.
  * - Functions for CRUD operations on products and transactions.
@@ -16,7 +16,8 @@ import axios from 'axios'; // Import axios for making HTTP requests
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
-const api = axios.create({ // Create an axios instance with a base URL for the API
+const api = axios.create({
+  // Create an axios instance with a base URL for the API
   baseURL: API_BASE_URL, // Base URL for the backend API
 });
 
@@ -141,5 +142,3 @@ export const getTransactionById = async (id) => {
     throw error;
   }
 };
-
-

@@ -1,10 +1,10 @@
 /**
  * Product Routes
- * 
+ *
  * Responsibilities:
  * - Define and manage API endpoints related to product operations.
  * - Connect routes to their respective controller methods.
- * 
+ *
  * Endpoints:
  * - `POST /products`: Add a new product.
  * - `GET /products`: Retrieve all products.
@@ -37,4 +37,3 @@ router.delete('/:id', productController.deleteProduct); // Route to handle delet
 
 // Export the router to be used in index.js
 module.exports = router;
-

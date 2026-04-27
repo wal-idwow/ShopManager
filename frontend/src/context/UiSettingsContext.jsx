@@ -1,15 +1,15 @@
 /**
  * UiSettingsContext
- * 
+ *
  * Responsibilities:
  * - Provide a context for managing UI settings such as language and theme.
  * - Store and retrieve user preferences from localStorage.
  * - Offer translation functionality for multilingual support.
- * 
+ *
  * Components:
  * - `UiSettingsProvider`: Wraps the application and provides context values.
  * - `useUiSettings`: Custom hook to access the context.
- * 
+ *
  * Translations:
  * - Contains English and Arabic translations for the application.
  */
@@ -30,7 +30,8 @@ const translations = {
     lightMode: 'Light',
     storeControlCenter: 'Store Control Center',
     homeHeroTitle: 'Move stock with fast purchase and sale actions.',
-    homeHeroCopy: 'Keep inventory updated in real time and review your latest activity from one dashboard.',
+    homeHeroCopy:
+      'Keep inventory updated in real time and review your latest activity from one dashboard.',
     makePurchase: 'Make Purchase',
     makeSale: 'Make Sale',
     productsCount: 'Products',
@@ -202,7 +203,7 @@ const getStoredValue = (key, fallback) => {
 
 /**
  * UiSettingsProvider Component
- * 
+ *
  * Responsibilities:
  * - Manage language and theme state.
  * - Persist user preferences in localStorage.
@@ -226,20 +227,19 @@ export const UiSettingsProvider = ({ children }) => {
   }, [theme]);
 
   // Memoize the context value to optimize performance
-  const value = React.useMemo(() => ({
-    language,
-    theme,
-    toggleLanguage: () => setLanguage((current) => (current === 'en' ? 'ar' : 'en')),
-    toggleTheme: () => setTheme((current) => (current === 'light' ? 'dark' : 'light')),
-    t: (key) => translations[language][key] || key,
-    isArabic: language === 'ar',
-  }), [language, theme]);
-
-  return (
-    <UiSettingsContext.Provider value={value}>
-      {children}
-    </UiSettingsContext.Provider>
+  const value = React.useMemo(
+    () => ({
+      language,
+      theme,
+      toggleLanguage: () => setLanguage((current) => (current === 'en' ? 'ar' : 'en')),
+      toggleTheme: () => setTheme((current) => (current === 'light' ? 'dark' : 'light')),
+      t: (key) => translations[language][key] || key,
+      isArabic: language === 'ar',
+    }),
+    [language, theme]
   );
+
+  return <UiSettingsContext.Provider value={value}>{children}</UiSettingsContext.Provider>;
 };
 
 /**
