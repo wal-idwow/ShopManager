@@ -18,6 +18,7 @@
 // Ensure database setup before running tests
 describe('Transaction API Endpoints', () => {
     let createdTransactionId;
+    let createdProductId;
 
     beforeAll(async () => {
         // Create tables if they do not exist
@@ -44,13 +45,24 @@ describe('Transaction API Endpoints', () => {
             );
         `);
 
+        // Clean up existing data
+        await db.exec('DELETE FROM transactions;');
+        await db.exec('DELETE FROM products;');
+
         // Insert a product for testing
-        await Product.create({
-            name: 'tide',
-            buy_price: 5.0,
-            sell_price: 10.0,
-            stock: 50
-        });
+        try {
+            createdProductId = await Product.create({
+                name: 'tide',
+                buy_price: 5.0,
+                sell_price: 10.0,
+                stock: 50
+            });
+        } catch (err) {
+            // Product already exists, skip
+            if (!err.message.includes('UNIQUE constraint failed')) {
+                throw err;
+            }
+        }
     });
 
     afterAll(async () => {
@@ -89,14 +101,14 @@ describe('Transaction API Endpoints', () => {
 
     // Test case for getting product name by product ID
     it('should get product name by product ID', async () => {
-        const response = await request(app).get('/transactions/1');
+        const response = await request(app).get(`/transactions/product-name/${createdProductId}`);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('name');
     });
 
     // Test case for getting product ID by product name
     it('should get product ID by product name', async () => {
-        const response = await request(app).get('/transactions/tide');
+        const response = await request(app).get('/transactions/product-id/tide');
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('id');
     });
@@ -106,7 +118,8 @@ describe('Transaction API Endpoints', () => {
         const response = await request(app)
             .put('/transactions/update-quantity')
             .send({
-                product_id: 1,
+                product_name: 'tide',
+                transaction_type: 'purchase',
                 quantity: 20
             });
         expect(response.status).toBe(200);
@@ -118,11 +131,11 @@ describe('Transaction API Endpoints', () => {
         const response = await request(app)
             .post('/transactions')
             .send({
-                product_id: 9999,
+                product_name: 'non_existent_product',
                 transaction_type: 'sale',
                 quantity: 10
             });
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     });
 
@@ -131,12 +144,12 @@ describe('Transaction API Endpoints', () => {
         const response = await request(app)
             .post('/transactions')
             .send({
-                product_id: 1,
+                product_name: 'tide',
                 transaction_type: 'sale',
                 quantity: 1000
             });
         expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty('error', 'Invalid input. Ensure product name, transaction type, and quantity are valid.');
+        expect(response.body).toHaveProperty('error', 'Not enough stock for this sale.');
     });
 
     // Test case for creating a transaction with invalid transaction type
@@ -144,11 +157,11 @@ describe('Transaction API Endpoints', () => {
         const response = await request(app)
             .post('/transactions')
             .send({
-                product_id: 1,
+                product_name: 'tide',
                 transaction_type: 'invalid_type',
                 quantity: 10
             });
         expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty('error', 'Invalid transaction type.');
+        expect(response.body).toHaveProperty('error', 'Invalid input. Ensure product name, transaction type, and quantity are valid.');
     });
 });

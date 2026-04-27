@@ -25,106 +25,154 @@
 // Import the Transaction model
 const Transaction = require('../models/transactionModel');
 
-// Controller function to create a new transaction
-exports.createTransaction = (req, res) => {
-    const { product_name, transaction_type, quantity } = req.body;
-
-    // Basic validation
-    if (!product_name || !['purchase', 'sale'].includes(transaction_type) || quantity <= 0) {
-        return res.status(400).json({ error: 'Invalid input. Ensure product name, transaction type, and quantity are valid.' });
-    }
-
-    // Fetch product_id using getProductIdbyName
-    Transaction.getProductIdbyName(product_name, (err, product_id) => {
-        if (err) {
-            if (err.message.includes('not found')) {
-                return res.status(404).json({ error: 'Product not found' });
-            }
-            return res.status(500).json({ error: 'Error fetching product ID' });
-        }
-        if (!product_id) return res.status(404).json({ error: 'Product not found' });
-
-        Transaction.getProductById(product_id, (err, product) => {
-            if (err) return res.status(500).json({ error: 'Error fetching product details' });
-            if (!product) return res.status(404).json({ error: 'Product not found' });
-
-            if (transaction_type === 'sale' && product.stock < quantity) {
-                return res.status(400).json({ error: 'Not enough stock for this sale.' });
-            }
-
-            // Calculate total_price
-            Transaction.calculateTotalPrice(product_id, quantity, transaction_type, (err, total_price) => {
-                if (err) return res.status(500).json({ error: 'Error calculating total price' });
-
-                // Generate timestamp
-                const timestamp = new Date().toISOString();
-
-                // Create the transaction
-                Transaction.create({ product_id, transaction_type, quantity, total_price, timestamp }, (err, id) => {
-                    if (err) return res.status(500).json({ error: 'Error creating transaction' });
-                    res.status(201).json({ id });
-                });
-            });
+// Utility function to promisify callback-based model methods
+const promisify = (fn, context) => {
+    return (...args) => {
+        return new Promise((resolve, reject) => {
+            fn.apply(context, [...args, (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            }]);
         });
-    });
+    };
+};
+
+// Controller function to create a new transaction
+exports.createTransaction = async (req, res) => {
+    try {
+        const { product_name, transaction_type, quantity } = req.body;
+
+        // Basic validation
+        if (!product_name || !['purchase', 'sale'].includes(transaction_type) || quantity <= 0) {
+            return res.status(400).json({ error: 'Invalid input. Ensure product name, transaction type, and quantity are valid.' });
+        }
+
+        // Promisify model methods
+        const getProductIdbyName = promisify(Transaction.getProductIdbyName, Transaction);
+        const getProductById = promisify(Transaction.getProductById, Transaction);
+        const calculateTotalPrice = promisify(Transaction.calculateTotalPrice, Transaction);
+        const createTransaction = promisify(Transaction.create, Transaction);
+
+        // Fetch product_id using getProductIdbyName
+        const product_id = await getProductIdbyName(product_name);
+
+        // Fetch product details
+        const product = await getProductById(product_id);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        // Check if there's enough stock for a sale
+        if (transaction_type === 'sale' && product.stock < quantity) {
+            return res.status(400).json({ error: 'Not enough stock for this sale.' });
+        }
+
+        // Calculate total_price
+        const total_price = await calculateTotalPrice(product_id, quantity, transaction_type);
+
+        // Generate timestamp
+        const timestamp = new Date().toISOString();
+
+        // Create the transaction
+        const id = await createTransaction({ product_id, transaction_type, quantity, total_price, timestamp });
+        res.status(201).json({ id });
+    } catch (err) {
+        if (err.message.includes('not found')) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        res.status(500).json({ error: err.message || 'Error creating transaction' });
+    }
 };
 
 // Controller function to get all transactions
-exports.getAllTransactions = (req, res) => {
-    Transaction.findAll((err, transactions) => {
-        if (err) return res.status(500).json({ error: 'Error fetching transactions' });
-        res.json(transactions); // Send the list of transactions as a JSON response
-    });
+exports.getAllTransactions = async (req, res) => {
+    try {
+        const findAll = promisify(Transaction.findAll, Transaction);
+        const transactions = await findAll();
+        res.json(transactions);
+    } catch (err) {
+        res.status(500).json({ error: err.message || 'Error fetching transactions' });
+    }
 };
 
 // Controller function to get a transaction by ID
-exports.getTransactionById = (req, res) => {
-    const id = req.params.id; // Extract the transaction ID from the request parameters
-    Transaction.findById(id, (err, transaction) => {
-        if (err) return res.status(500).json({ error: 'Error fetching transaction' });
-        if (!transaction) return res.status(404).json({ error: 'Transaction not found' });
-        res.json(transaction); // Send the transaction details as a JSON response
-    });
+exports.getTransactionById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const findById = promisify(Transaction.findById, Transaction);
+        const transaction = await findById(id);
+
+        if (!transaction) {
+            return res.status(404).json({ error: 'Transaction not found' });
+        }
+
+        res.json(transaction);
+    } catch (err) {
+        res.status(500).json({ error: err.message || 'Error fetching transaction' });
+    }
 };
 
 // Controller function to get product name by ID
-exports.getProductNameById = (req, res) => {
-    const productId = req.params.productId; // Extract the product ID from the request parameters
-    Transaction.getProductNameById(productId, (err, productName) => {
-        if (err) return res.status(500).json({ error: 'Error fetching product name' });
-        if (!productName) return res.status(404).json({ error: 'Product not found' });
-        res.json({ name: productName }); // Send the product name as a JSON response
-    });
+exports.getProductNameById = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const getProductNameById = promisify(Transaction.getProductNameById, Transaction);
+        const productName = await getProductNameById(productId);
+
+        if (!productName) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        res.json({ name: productName });
+    } catch (err) {
+        res.status(500).json({ error: err.message || 'Error fetching product name' });
+    }
 };
 
 // Controller function to get product ID by name
-exports.getProductIdByName = (req, res) => {
-    const productName = req.params.productName; // Extract the product name from the request parameters
-    Transaction.getProductIdbyName(productName, (err, productId) => {
-        if (err) return res.status(500).json({ error: 'Error fetching product ID' });
-        if (!productId) return res.status(404).json({ error: 'Product not found' });
-        res.json({ id: productId }); // Send the product ID as a JSON response
-    });
+exports.getProductIdByName = async (req, res) => {
+    try {
+        const productName = req.params.productName;
+        const getProductIdbyName = promisify(Transaction.getProductIdbyName, Transaction);
+        const productId = await getProductIdbyName(productName);
+
+        if (!productId) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        res.json({ id: productId });
+    } catch (err) {
+        if (err.message.includes('not found')) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        res.status(500).json({ error: err.message || 'Error fetching product ID' });
+    }
 };
 
 // Controller function to update product quantity
-exports.updateProductQuantity = (req, res) => {
-    const { product_name, transaction_type, quantity } = req.body;
+exports.updateProductQuantity = async (req, res) => {
+    try {
+        const { product_name, transaction_type, quantity } = req.body;
 
-    // Basic validation
-    if (!product_name || !['purchase', 'sale'].includes(transaction_type) || quantity <= 0) {
-        return res.status(400).json({ error: 'Invalid input. Ensure product name, transaction type, and quantity are valid.' });
-    }
+        // Basic validation
+        if (!product_name || !['purchase', 'sale'].includes(transaction_type) || quantity <= 0) {
+            return res.status(400).json({ error: 'Invalid input. Ensure product name, transaction type, and quantity are valid.' });
+        }
 
-    // Fetch product_id using getProductIdbyName
-    Transaction.getProductIdbyName(product_name, (err, product_id) => {
-        if (err) return res.status(500).json({ error: 'Error fetching product ID' });
-        if (!product_id) return res.status(404).json({ error: 'Product not found' });
+        // Promisify model methods
+        const getProductIdbyName = promisify(Transaction.getProductIdbyName, Transaction);
+        const updateProductQuantity = promisify(Transaction.updateProductQuantity, Transaction);
+
+        // Fetch product_id using getProductIdbyName
+        const product_id = await getProductIdbyName(product_name);
 
         // Update the product quantity
-        Transaction.updateProductQuantity(transaction_type, quantity, product_id, (err, result) => {
-            if (err) return res.status(500).json({ error: 'Error updating product quantity' });
-            res.json({ message: 'Product quantity updated successfully' }); // Send a success message as a JSON response
-        });
-    });
+        await updateProductQuantity(transaction_type, quantity, product_id);
+        res.json({ message: 'Product quantity updated successfully' });
+    } catch (err) {
+        if (err.message.includes('not found')) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        res.status(500).json({ error: err.message || 'Error updating product quantity' });
+    }
 };

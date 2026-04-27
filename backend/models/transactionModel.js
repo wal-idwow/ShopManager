@@ -142,6 +142,21 @@ const Transaction = {
         } catch (error) {
             callback(error, null);
         }
+    },
+
+    // Update product quantity based on transaction type
+    updateProductQuantity: (transaction_type, quantity, product_id, callback) => {
+        const updateProductQuantity = db.prepare(`
+            UPDATE products
+            SET stock = stock + CASE WHEN ? = 'purchase' THEN ? ELSE -? END
+            WHERE id = ?;
+        `);
+        try {
+            updateProductQuantity.run(transaction_type, transaction_type === 'purchase' ? quantity : -quantity, quantity, product_id);
+            callback(null, { message: 'Product quantity updated successfully' });
+        } catch (error) {
+            callback(error, null);
+        }
     }
 
 };

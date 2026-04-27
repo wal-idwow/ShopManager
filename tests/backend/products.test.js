@@ -74,8 +74,20 @@ describe('Product API Endpoints', () => {
 
     // Test case for updating a product with invalid data
     it('should return 400 for invalid product update', async () => {
+        // First create a product to update
+        const createResponse = await request(app)
+            .post('/products')
+            .send({
+                name: 'Product for Invalid Update Test',
+                buy_price: 10.0,
+                sell_price: 15.0,
+                stock: 100
+            });
+        
+        const productIdForUpdate = createResponse.body.id;
+        
         const response = await request(app)
-            .put(`/products/${createdProductId}`)
+            .put(`/products/${productIdForUpdate}`)
             .send({
                 name: '',
                 buy_price: -10.0,
