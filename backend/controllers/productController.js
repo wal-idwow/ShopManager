@@ -160,6 +160,7 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const id = Number(req.params.id);
+    const Database = require('better-sqlite3');
 
     // Validate ID
     if (!Number.isInteger(id) || id <= 0) {
@@ -175,10 +176,28 @@ exports.deleteProduct = async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
+    // Check for related transactions
+    const db = require('../database/database');
+    const transactionCount = db.prepare(`
+      SELECT COUNT(*) as count FROM transactions WHERE product_id = ?;
+    `).get(id);
+
+    const relatedTransactions = transactionCount?.count || 0;
+    let warningMessage = null;
+
+    if (relatedTransactions > 0) {
+      warningMessage = `⚠️ Warning: ${relatedTransactions} transaction(s) associated with this product will be deleted (ON DELETE CASCADE).`;
+      console.log(warningMessage);
+    }
+
+    // Delete the product (transactions will cascade delete due to ON DELETE CASCADE)
     await deleteById(id);
 
     res.json({
-      message: `Product: ${product.name}, id ${id} deleted successfully`,
+      message: `Product: ${product.name} (ID: ${id}) deleted successfully`,
+      deletedTransactions: relatedTransactions,
+      warning: warningMessage,
+      dataIntegrity: relatedTransactions === 0 ? 'maintained' : 'cascade delete applied',
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

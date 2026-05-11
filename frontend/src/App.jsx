@@ -20,6 +20,7 @@ import Navbar from './components/Navbar';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import TransactionScreen from './screens/TransactionScreen';
+import AdminScreen from './screens/AdminScreen';
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
             <Route path="/products/new" element={<ProductScreen />} />
             <Route path="/products/edit/:id" element={<ProductScreen />} />
             <Route path="/transactions" element={<TransactionScreen />} />
+            <Route path="/admin" element={<AdminScreen />} />
           </Routes>
         </main>
       </div>

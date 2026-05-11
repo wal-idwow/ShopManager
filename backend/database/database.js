@@ -70,11 +70,12 @@ function createTables() {
         CREATE TABLE IF NOT EXISTS transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             product_id INTEGER NOT NULL,
+            product_name TEXT,
             transaction_type TEXT NOT NULL CHECK(transaction_type IN ('sale', 'purchase')),
             quantity INTEGER NOT NULL,
             total_price REAL NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (product_id) REFERENCES products(id)
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
         );
     `;
 
@@ -159,4 +160,86 @@ process.on('exit', () => {
   closeDatabase();
 });
 
+// ==================== DATABASE MAINTENANCE FUNCTIONS ====================
+
+/**
+ * Delete all data and reset auto-increment IDs
+ * Used for fresh database state and testing
+ */
+function resetDatabase() {
+  try {
+    console.log('🔄 Resetting database - deleting all records...');
+    
+    // Delete all transactions first (due to foreign key constraints)
+    db.prepare('DELETE FROM transactions;').run();
+    console.log('✓ Cleared transactions table');
+    
+    // Delete all products
+    db.prepare('DELETE FROM products;').run();
+    console.log('✓ Cleared products table');
+    
+    // Reset auto-increment sequence for SQLite
+    // SQLite stores the next ID in sqlite_sequence table
+    db.prepare("DELETE FROM sqlite_sequence WHERE name='products';").run();
+    db.prepare("DELETE FROM sqlite_sequence WHERE name='transactions';").run();
+    console.log('✓ Reset auto-increment generators');
+    
+    console.log('✅ Database reset complete - ID generators refreshed');
+    return { success: true, message: 'Database reset successful' };
+  } catch (error) {
+    console.error('❌ Error resetting database:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get database statistics
+ */
+function getDbStats() {
+  try {
+    const productCount = db.prepare('SELECT COUNT(*) as count FROM products;').get();
+    const transactionCount = db.prepare('SELECT COUNT(*) as count FROM transactions;').get();
+    const orphanedTransactions = db.prepare(`
+      SELECT COUNT(*) as count FROM transactions t
+      WHERE t.product_id NOT IN (SELECT id FROM products);
+    `).get();
+    
+    return {
+      products: productCount.count,
+      transactions: transactionCount.count,
+      orphanedTransactions: orphanedTransactions.count,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('Error getting database stats:', error);
+    throw error;
+  }
+}
+
+/**
+ * Clear orphaned transactions (those referencing deleted products)
+ */
+function cleanupOrphanedTransactions() {
+  try {
+    console.log('🧹 Cleaning up orphaned transactions...');
+    
+    const result = db.prepare(`
+      DELETE FROM transactions 
+      WHERE product_id NOT IN (SELECT id FROM products);
+    `).run();
+    
+    console.log(`✓ Deleted ${result.changes} orphaned transaction(s)`);
+    return { deletedCount: result.changes };
+  } catch (error) {
+    console.error('❌ Error cleaning orphaned transactions:', error);
+    throw error;
+  }
+}
+
+/**
+ * Export database functions for use in controllers/routes
+ */
 module.exports = db;
+module.exports.resetDatabase = resetDatabase;
+module.exports.getDbStats = getDbStats;
+module.exports.cleanupOrphanedTransactions = cleanupOrphanedTransactions;

@@ -61,6 +61,12 @@ const Navbar = () => {
           >
             {t('transactions')}
           </NavLink>
+          <NavLink
+            to="/admin"
+            className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}
+          >
+            {t('admin') || 'Admin'}
+          </NavLink>
         </div>
       </div>
     </nav>

@@ -19,6 +19,7 @@ const express = require('express'); // Web framework for Node.js
 const cors = require('cors'); // Middleware to enable Cross-Origin Resource Sharing
 const productRoutes = require('./routes/productRoutes'); // Import product routes
 const transactionRoutes = require('./routes/transactionRoutes'); // Import transaction routes
+const adminRoutes = require('./routes/adminRoutes'); // Import admin routes
 
 // Create Express application
 const app = express();
@@ -28,6 +29,7 @@ app.use(cors()); // Middleware to enable Cross-Origin Resource Sharing
 // Register routes
 app.use('/products', productRoutes); // Route for product-related operations
 app.use('/transactions', transactionRoutes); // Route for transaction-related operations
+app.use('/api/admin', adminRoutes); // Route for admin operations
 
 // Health check endpoint
 app.get('/', (req, res) => {

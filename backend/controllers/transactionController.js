@@ -77,9 +77,10 @@ exports.createTransaction = async (req, res) => {
     // Generate timestamp
     const timestamp = new Date().toISOString();
 
-    // Create the transaction
+    // Create the transaction with product_name for historical integrity
     const id = await createTransaction({
       product_id,
+      product_name: product.name,
       transaction_type,
       quantity,
       total_price,

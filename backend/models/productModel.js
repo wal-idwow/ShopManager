@@ -37,7 +37,7 @@ const Product = {
   // Retrieve all products
   findAll: (callback) => {
     const selectProducts = db.prepare(`
-            SELECT * FROM products where status = 'active';
+            SELECT * FROM products;
         `);
     try {
       const results = selectProducts.all();
@@ -50,7 +50,7 @@ const Product = {
   // Retrieve a product by ID
   findById: (id, callback) => {
     const selectProduct = db.prepare(`
-            SELECT * FROM products WHERE id = ? AND status = 'active';
+            SELECT * FROM products WHERE id = ?;
         `);
     try {
       const result = selectProduct.get(id);
@@ -66,7 +66,7 @@ const Product = {
     const updateProduct = db.prepare(`
             UPDATE products
             SET name = ?, buy_price = ?, sell_price = ?, stock = ?
-            WHERE id = ? AND status = 'active';
+            WHERE id = ?;
         `);
     try {
       updateProduct.run(name, buy_price, sell_price, stock, id);
@@ -76,16 +76,19 @@ const Product = {
     }
   },
 
-  // Delete a product by ID
+  // Delete a product by ID (hard delete)
+  // ON DELETE CASCADE in transactions table will automatically delete related transactions
   deleteById: (id, callback) => {
     const deleteProduct = db.prepare(`
-            UPDATE products
-            SET status = 'inactive'
+            DELETE FROM products
             WHERE id = ? AND status = 'active';
         `);
     try {
-      deleteProduct.run(id);
-      callback(null, { message: 'Product deleted successfully' });
+      const result = deleteProduct.run(id);
+      callback(null, { 
+        message: 'Product deleted successfully',
+        deletedRows: result.changes 
+      });
     } catch (error) {
       callback(error, null);
     }

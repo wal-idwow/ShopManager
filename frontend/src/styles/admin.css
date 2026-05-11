@@ -1,0 +1,596 @@
+/**
+ * Admin Screen Styles
+ * 
+ * Styling for the admin panel interface including:
+ * - Statistics display
+ * - Health check indicators
+ * - Operation buttons
+ * - Alert messages
+ */
+
+/* ==================== ADMIN CONTAINER ==================== */
+.admin-screen {
+  padding: 2rem;
+  min-height: calc(100vh - 200px);
+  transition: background-color 0.3s ease;
+}
+
+.admin-light {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.admin-dark {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ==================== HEADER ==================== */
+.admin-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 1rem;
+}
+
+.admin-dark .admin-header {
+  border-bottom-color: #444;
+}
+
+.admin-header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.admin-subtitle {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+.admin-dark .admin-subtitle {
+  color: #999;
+}
+
+/* ==================== ALERTS ==================== */
+.admin-alert {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 4px solid;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-alert-success {
+  background-color: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.admin-dark .admin-alert-success {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #81c784;
+}
+
+.admin-alert-error {
+  background-color: #ffebee;
+  border-color: #f44336;
+}
+
+.admin-dark .admin-alert-error {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #ef5350;
+}
+
+.admin-alert-info {
+  background-color: #e3f2fd;
+  border-color: #2196f3;
+}
+
+.admin-dark .admin-alert-info {
+  background-color: rgba(33, 150, 243, 0.1);
+  color: #64b5f6;
+}
+
+.admin-alert-warning {
+  background-color: #fff3e0;
+  border-color: #ff9800;
+}
+
+.admin-dark .admin-alert-warning {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #ffb74d;
+}
+
+.admin-alert-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.admin-alert-content p {
+  margin: 0;
+  flex: 1;
+}
+
+.admin-alert-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.admin-alert-close:hover {
+  opacity: 1;
+}
+
+/* ==================== CONTENT LAYOUT ==================== */
+.admin-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .admin-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-left,
+.admin-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ==================== CARDS ==================== */
+.admin-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.admin-dark .admin-card {
+  background-color: #2a2a2a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.admin-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.admin-card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-dark .admin-card-header {
+  border-bottom-color: #444;
+}
+
+.admin-card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* ==================== STATISTICS CARD ==================== */
+.admin-stats-card {
+}
+
+.admin-stats {
+  padding: 1.5rem;
+}
+
+.admin-stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1rem;
+}
+
+.admin-dark .admin-stat-item {
+  border-bottom-color: #444;
+}
+
+.admin-stat-item:last-child {
+  border-bottom: none;
+}
+
+.admin-stat-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.admin-dark .admin-stat-label {
+  color: #999;
+}
+
+.admin-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2196f3;
+}
+
+.admin-stat-value.orphaned {
+  color: #ff9800;
+}
+
+.admin-stat-timestamp {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.admin-dark .admin-stat-timestamp {
+  border-top-color: #444;
+  color: #666;
+}
+
+/* ==================== HEALTH CARD ==================== */
+.admin-health-card {
+}
+
+.admin-health {
+  padding: 1.5rem;
+}
+
+.admin-health-status {
+  margin-bottom: 1.5rem;
+}
+
+.admin-status-indicator {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.admin-status-indicator.status-healthy {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.admin-dark .admin-status-indicator.status-healthy {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #81c784;
+}
+
+.admin-status-indicator.status-warning {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.admin-dark .admin-status-indicator.status-warning {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #ffb74d;
+}
+
+.admin-status-indicator.status-error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.admin-dark .admin-status-indicator.status-error {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #ef5350;
+}
+
+.admin-checks {
+  margin-bottom: 1rem;
+}
+
+.admin-check-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.admin-check-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.admin-dark .admin-check-label {
+  color: #999;
+}
+
+.admin-check-value {
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.admin-check-value.status-connected,
+.admin-check-value.status-ok {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+}
+
+.admin-dark .admin-check-value.status-connected,
+.admin-dark .admin-check-value.status-ok {
+  color: #81c784;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.admin-recommendations {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.admin-dark .admin-recommendations {
+  border-top-color: #444;
+}
+
+.admin-recommendations-title {
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #ff9800;
+}
+
+.admin-recommendations ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.admin-dark .admin-recommendations ul {
+  color: #999;
+}
+
+.admin-recommendations li {
+  margin-bottom: 0.25rem;
+}
+
+/* ==================== OPERATIONS CARD ==================== */
+.admin-operations-card {
+}
+
+.admin-operations {
+  padding: 1.5rem;
+}
+
+.admin-operation-group {
+  margin-bottom: 1.5rem;
+}
+
+.admin-operation-group:last-child {
+  margin-bottom: 0;
+}
+
+.admin-operation-group h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.admin-operation-description {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.admin-dark .admin-operation-description {
+  color: #999;
+}
+
+.admin-operation-divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 1.5rem 0;
+}
+
+.admin-dark .admin-operation-divider {
+  background-color: #444;
+}
+
+/* ==================== BUTTONS ==================== */
+.admin-btn {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.admin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-btn-danger {
+  background-color: #f44336;
+  color: white;
+}
+
+.admin-btn-danger:hover:not(:disabled) {
+  background-color: #d32f2f;
+  box-shadow: 0 2px 6px rgba(244, 67, 54, 0.3);
+}
+
+.admin-btn-warning {
+  background-color: #ff9800;
+  color: white;
+}
+
+.admin-btn-warning:hover:not(:disabled) {
+  background-color: #f57c00;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+}
+
+.admin-btn-small {
+  width: auto;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.admin-dark .admin-btn-small {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+.admin-btn-small:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.admin-dark .admin-btn-small:hover:not(:disabled) {
+  background-color: #4a4a4a;
+}
+
+.admin-btn-refresh {
+}
+
+/* ==================== INFO CARD ==================== */
+.admin-info-card {
+}
+
+.admin-info {
+  padding: 1.5rem;
+}
+
+.admin-info-section {
+  margin-bottom: 1.5rem;
+}
+
+.admin-info-section:last-child {
+  margin-bottom: 0;
+}
+
+.admin-info-section h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.admin-info-section ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  list-style: none;
+}
+
+.admin-info-section li {
+  padding: 0.25rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.admin-dark .admin-info-section li {
+  color: #999;
+}
+
+/* ==================== LOADING & ERROR STATES ==================== */
+.admin-loading {
+  padding: 2rem;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+.admin-error {
+  padding: 1.5rem;
+  background-color: #ffebee;
+  border-radius: 6px;
+  color: #c62828;
+  text-align: center;
+}
+
+.admin-dark .admin-error {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #ef5350;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .admin-screen {
+    padding: 1rem;
+  }
+
+  .admin-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .admin-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .admin-content {
+    gap: 1rem;
+  }
+
+  .admin-btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .admin-card-header {
+    padding: 1rem;
+  }
+
+  .admin-alert {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .admin-alert-content {
+    flex-direction: column;
+  }
+
+  .admin-alert-close {
+    align-self: flex-end;
+  }
+}

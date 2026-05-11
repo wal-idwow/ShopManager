@@ -25,15 +25,15 @@ const Transaction = {
   // Uses database transaction to ensure atomicity - both operations succeed or both fail
   create: (transactionData, callback) => {
     // Destructure the transaction data object to get individual fields
-    const { product_id, transaction_type, quantity, total_price, timestamp } = transactionData;
+    const { product_id, product_name, transaction_type, quantity, total_price, timestamp } = transactionData;
 
     try {
       console.log('Inserting transaction:', transactionData); // Log the data being inserted
 
       // Prepare statements
       const insertTransaction = db.prepare(`
-                INSERT INTO transactions (product_id, transaction_type, quantity, total_price, timestamp)
-                VALUES (?, ?, ?, ?, ?);
+                INSERT INTO transactions (product_id, product_name, transaction_type, quantity, total_price, timestamp)
+                VALUES (?, ?, ?, ?, ?, ?);
             `);
 
       const updateProductQuantity = db.prepare(`
@@ -47,6 +47,7 @@ const Transaction = {
         // Insert the transaction record
         const result = insertTransaction.run(
           product_id,
+          product_name,
           transaction_type,
           quantity,
           total_price,
