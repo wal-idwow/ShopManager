@@ -16,9 +16,10 @@ MiniShop is a full-stack web application designed to manage a small shop's produ
 ### Backend
 The backend is built using Node.js and is responsible for handling the server-side logic, including database interactions and API endpoints. It is organized as follows:
 
-- **Controllers**: Contains logic for handling requests related to products and transactions.
+- **Controllers**: Contains logic for handling requests related to products, transactions and admin.
   - `productController.js`
   - `transactionController.js`
+  - `adminController.js`
 - **Database**: Manages database connections and operations.
   - `database.js`
   - `databaseTest.js`
@@ -28,6 +29,7 @@ The backend is built using Node.js and is responsible for handling the server-si
 - **Routes**: Defines API endpoints for products and transactions.
   - `productRoutes.js`
   - `transactionRoutes.js`
+  - `adminRoutes.js`
 
 ### Frontend
 The frontend is built using React and provides the user interface for interacting with the application. It is organized as follows:
@@ -36,12 +38,13 @@ The frontend is built using React and provides the user interface for interactin
 - **Src**: Contains the main application logic and components.
   - `App.jsx`: The main application component.
   - `index.js`: Entry point for the React application.
-  - **Components**: Reusable UI components such as `Navbar`, `ProductCard`, and `ProductList`.
-  - **Screens**: Pages of the application, including `HomeScreen`, `ProductScreen`, and `TransactionScreen`.
-  - **Services**: Contains `api.js` for handling API requests.
+  - **Components**: Reusable UI components such as `Navbar`, `ProductCard`, and `ProductList`, `transactionsCard`, `transactionsList` .
+  - **Screens**: Pages of the application, including `HomeScreen`, `ProductScreen`, and `TransactionScreen`, `AdminScreen`.
+  - **Services**: Contains `api.js` for handling API requests and `adminApi.js` for handling adminAPI requests.
   - **Styles**: CSS files for styling the application.
     - `global.css`
     - `product.css`
+    - `admin.css`
 
 ### Tests
 The project includes test files for both the backend and frontend to ensure functionality:

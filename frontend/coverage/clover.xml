@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1778608456144" clover="3.2.0">
+  <project timestamp="1778608456145" name="All files">
+    <metrics statements="376" coveredstatements="224" conditionals="183" coveredconditionals="109" methods="92" coveredmethods="56" elements="651" coveredelements="389" complexity="0" loc="376" ncloc="376" packages="4" files="12" classes="12"/>
+    <package name="components">
+      <metrics statements="99" coveredstatements="84" conditionals="72" coveredconditionals="55" methods="29" coveredmethods="25"/>
+      <file name="Navbar.jsx" path="/home/medal/Shop_Manager/frontend/src/components/Navbar.jsx">
+        <metrics statements="7" coveredstatements="7" conditionals="14" coveredconditionals="11" methods="5" coveredmethods="5"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="22" type="stmt"/>
+        <line num="28" count="22" type="stmt"/>
+        <line num="49" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="22" type="cond" truecount="1" falsecount="1"/>
+        <line num="66" count="22" type="cond" truecount="1" falsecount="1"/>
+      </file>
+      <file name="ProductCard.jsx" path="/home/medal/Shop_Manager/frontend/src/components/ProductCard.jsx">
+        <metrics statements="6" coveredstatements="6" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="5" type="stmt"/>
+        <line num="22" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="5" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+      </file>
+      <file name="ProductList.jsx" path="/home/medal/Shop_Manager/frontend/src/components/ProductList.jsx">
+        <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="9" type="stmt"/>
+        <line num="23" count="9" type="cond" truecount="4" falsecount="0"/>
+        <line num="24" count="8" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+      </file>
+      <file name="transactionsCard.jsx" path="/home/medal/Shop_Manager/frontend/src/components/transactionsCard.jsx">
+        <metrics statements="74" coveredstatements="59" conditionals="48" coveredconditionals="34" methods="17" coveredmethods="13"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="8" type="stmt"/>
+        <line num="18" count="8" type="stmt"/>
+        <line num="20" count="8" type="stmt"/>
+        <line num="21" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="36" count="4" type="stmt"/>
+        <line num="39" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="43" count="7" type="stmt"/>
+        <line num="80" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="81" count="14" type="stmt"/>
+        <line num="82" count="14" type="stmt"/>
+        <line num="83" count="14" type="stmt"/>
+        <line num="84" count="14" type="stmt"/>
+        <line num="85" count="14" type="stmt"/>
+        <line num="86" count="14" type="stmt"/>
+        <line num="87" count="14" type="stmt"/>
+        <line num="89" count="14" type="stmt"/>
+        <line num="90" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="93" count="14" type="stmt"/>
+        <line num="94" count="6" type="stmt"/>
+        <line num="96" count="6" type="stmt"/>
+        <line num="97" count="6" type="stmt"/>
+        <line num="98" count="6" type="stmt"/>
+        <line num="99" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="103" count="5" type="stmt"/>
+        <line num="104" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="105" count="5" type="stmt"/>
+        <line num="106" count="6" type="stmt"/>
+        <line num="107" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="111" count="3" type="stmt"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="120" count="6" type="stmt"/>
+        <line num="122" count="6" type="stmt"/>
+        <line num="123" count="6" type="stmt"/>
+        <line num="127" count="14" type="stmt"/>
+        <line num="128" count="2" type="stmt"/>
+        <line num="129" count="2" type="stmt"/>
+        <line num="131" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="136" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="137" count="1" type="stmt"/>
+        <line num="138" count="1" type="stmt"/>
+        <line num="141" count="1" type="stmt"/>
+        <line num="143" count="1" type="stmt"/>
+        <line num="144" count="1" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="150" count="0" type="stmt"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="156" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="160" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="163" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="165" count="1" type="stmt"/>
+        <line num="169" count="14" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="187" count="14" type="stmt"/>
+        <line num="201" count="1" type="stmt"/>
+        <line num="206" count="0" type="stmt"/>
+      </file>
+      <file name="transactionsList.jsx" path="/home/medal/Shop_Manager/frontend/src/components/transactionsList.jsx">
+        <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="5" type="stmt"/>
+        <line num="20" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="context">
+      <metrics statements="26" coveredstatements="25" conditionals="12" coveredconditionals="10" methods="13" coveredmethods="13"/>
+      <file name="UiSettingsContext.jsx" path="/home/medal/Shop_Manager/frontend/src/context/UiSettingsContext.jsx">
+        <metrics statements="26" coveredstatements="25" conditionals="12" coveredconditionals="10" methods="13" coveredmethods="13"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="193" count="1" type="stmt"/>
+        <line num="201" count="1" type="stmt"/>
+        <line num="202" count="100" type="stmt"/>
+        <line num="203" count="100" type="cond" truecount="2" falsecount="0"/>
+        <line num="214" count="1" type="stmt"/>
+        <line num="215" count="61" type="stmt"/>
+        <line num="216" count="61" type="stmt"/>
+        <line num="219" count="61" type="stmt"/>
+        <line num="220" count="56" type="stmt"/>
+        <line num="221" count="56" type="cond" truecount="2" falsecount="0"/>
+        <line num="222" count="56" type="stmt"/>
+        <line num="226" count="61" type="stmt"/>
+        <line num="227" count="55" type="stmt"/>
+        <line num="228" count="55" type="stmt"/>
+        <line num="232" count="61" type="stmt"/>
+        <line num="233" count="61" type="stmt"/>
+        <line num="236" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="237" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="238" count="547" type="cond" truecount="1" falsecount="1"/>
+        <line num="244" count="61" type="stmt"/>
+        <line num="252" count="1" type="stmt"/>
+        <line num="253" count="103" type="stmt"/>
+        <line num="255" count="102" type="cond" truecount="1" falsecount="1"/>
+        <line num="256" count="0" type="stmt"/>
+        <line num="259" count="102" type="stmt"/>
+      </file>
+    </package>
+    <package name="screens">
+      <metrics statements="179" coveredstatements="115" conditionals="89" coveredconditionals="44" methods="38" coveredmethods="18"/>
+      <file name="AdminScreen.jsx" path="/home/medal/Shop_Manager/frontend/src/screens/AdminScreen.jsx">
+        <metrics statements="69" coveredstatements="55" conditionals="48" coveredconditionals="29" methods="10" coveredmethods="7"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="20" type="stmt"/>
+        <line num="30" count="19" type="stmt"/>
+        <line num="31" count="19" type="stmt"/>
+        <line num="34" count="19" type="stmt"/>
+        <line num="35" count="19" type="stmt"/>
+        <line num="38" count="19" type="stmt"/>
+        <line num="39" count="19" type="stmt"/>
+        <line num="42" count="19" type="stmt"/>
+        <line num="43" count="7" type="stmt"/>
+        <line num="44" count="7" type="stmt"/>
+        <line num="45" count="7" type="stmt"/>
+        <line num="47" count="7" type="stmt"/>
+        <line num="53" count="19" type="stmt"/>
+        <line num="54" count="9" type="stmt"/>
+        <line num="55" count="9" type="stmt"/>
+        <line num="56" count="9" type="stmt"/>
+        <line num="57" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="7" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="71" count="9" type="stmt"/>
+        <line num="78" count="19" type="stmt"/>
+        <line num="79" count="9" type="stmt"/>
+        <line num="80" count="9" type="stmt"/>
+        <line num="81" count="9" type="stmt"/>
+        <line num="82" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="83" count="9" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="96" count="9" type="stmt"/>
+        <line num="103" count="19" type="stmt"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="108" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="1" type="stmt"/>
+        <line num="113" count="1" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="118" count="1" type="stmt"/>
+        <line num="119" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="120" count="1" type="stmt"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="126" count="1" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="139" count="1" type="stmt"/>
+        <line num="146" count="19" type="stmt"/>
+        <line num="147" count="1" type="stmt"/>
+        <line num="151" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="159" count="1" type="stmt"/>
+        <line num="160" count="1" type="stmt"/>
+        <line num="161" count="1" type="stmt"/>
+        <line num="162" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="163" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="164" count="1" type="stmt"/>
+        <line num="172" count="1" type="stmt"/>
+        <line num="173" count="1" type="stmt"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="181" count="0" type="stmt"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="193" count="19" type="stmt"/>
+        <line num="194" count="0" type="stmt"/>
+        <line num="195" count="0" type="stmt"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="202" count="19" type="stmt"/>
+        <line num="218" count="0" type="stmt"/>
+        <line num="314" count="0" type="stmt"/>
+      </file>
+      <file name="HomeScreen.jsx" path="/home/medal/Shop_Manager/frontend/src/screens/HomeScreen.jsx">
+        <metrics statements="25" coveredstatements="18" conditionals="8" coveredconditionals="1" methods="12" coveredmethods="3"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="44" count="3" type="stmt"/>
+        <line num="48" count="3" type="cond" truecount="0" falsecount="2"/>
+        <line num="49" count="3" type="stmt"/>
+        <line num="50" count="3" type="stmt"/>
+        <line num="51" count="3" type="stmt"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="162" count="0" type="stmt"/>
+        <line num="169" count="0" type="stmt"/>
+      </file>
+      <file name="ProductScreen.jsx" path="/home/medal/Shop_Manager/frontend/src/screens/ProductScreen.jsx">
+        <metrics statements="66" coveredstatements="30" conditionals="31" coveredconditionals="12" methods="12" coveredmethods="5"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="31" count="16" type="stmt"/>
+        <line num="32" count="15" type="stmt"/>
+        <line num="33" count="15" type="stmt"/>
+        <line num="34" count="15" type="stmt"/>
+        <line num="37" count="15" type="stmt"/>
+        <line num="40" count="15" type="cond" truecount="1" falsecount="0"/>
+        <line num="46" count="15" type="stmt"/>
+        <line num="47" count="15" type="stmt"/>
+        <line num="48" count="15" type="stmt"/>
+        <line num="49" count="15" type="stmt"/>
+        <line num="50" count="15" type="stmt"/>
+        <line num="51" count="15" type="stmt"/>
+        <line num="54" count="15" type="stmt"/>
+        <line num="61" count="15" type="stmt"/>
+        <line num="62" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="71" count="15" type="stmt"/>
+        <line num="72" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="82" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="87" count="15" type="stmt"/>
+        <line num="88" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="96" count="15" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="106" count="15" type="stmt"/>
+        <line num="107" count="3" type="stmt"/>
+        <line num="108" count="3" type="stmt"/>
+        <line num="110" count="3" type="cond" truecount="2" falsecount="4"/>
+        <line num="111" count="3" type="stmt"/>
+        <line num="112" count="3" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="122" count="0" type="stmt"/>
+        <line num="123" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="137" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="142" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="143" count="5" type="stmt"/>
+        <line num="160" count="10" type="stmt"/>
+        <line num="177" count="0" type="stmt"/>
+        <line num="187" count="2" type="stmt"/>
+        <line num="197" count="0" type="stmt"/>
+        <line num="207" count="1" type="stmt"/>
+        <line num="216" count="0" type="stmt"/>
+      </file>
+      <file name="TransactionScreen.jsx" path="/home/medal/Shop_Manager/frontend/src/screens/TransactionScreen.jsx">
+        <metrics statements="19" coveredstatements="12" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="3"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="services">
+      <metrics statements="72" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="12" coveredmethods="0"/>
+      <file name="adminApi.js" path="/home/medal/Shop_Manager/frontend/src/services/adminApi.js">
+        <metrics statements="22" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+      </file>
+      <file name="api.js" path="/home/medal/Shop_Manager/frontend/src/services/api.js">
+        <metrics statements="50" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="122" count="0" type="stmt"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="127" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="142" count="0" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

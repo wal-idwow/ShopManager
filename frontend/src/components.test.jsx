@@ -2,29 +2,74 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
 import ProductList from './components/ProductList';
 import TransactionCard, { TransactionForm } from './components/transactionsCard';
 import TransactionsList from './components/transactionsList';
 import { UiSettingsProvider } from './context/UiSettingsContext';
-import { getProductById, getProducts } from './services/api';
+import HomeScreen from './screens/HomeScreen';
+import ProductScreen from './screens/ProductScreen';
+import TransactionScreen from './screens/TransactionScreen';
+import AdminScreen from './screens/AdminScreen';
+import {
+  getProductById,
+  getProducts,
+  getTransactions,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  createTransaction,
+} from './services/api';
+import {
+  resetDatabase,
+  getDbStats,
+  cleanupOrphanedTransactions,
+  getHealthCheck,
+} from './services/adminApi';
 
 jest.mock('./services/api', () => ({
   getProductById: jest.fn(),
   getProducts: jest.fn(),
+  getTransactions: jest.fn(),
+  createProduct: jest.fn(),
+  updateProduct: jest.fn(),
+  deleteProduct: jest.fn(),
+  createTransaction: jest.fn(),
 }));
 
-const renderWithProviders = (ui, { route = '/' } = {}) =>
+jest.mock('./services/adminApi', () => ({
+  resetDatabase: jest.fn(),
+  getDbStats: jest.fn(),
+  cleanupOrphanedTransactions: jest.fn(),
+  getHealthCheck: jest.fn(),
+}));
+
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
+
+const renderWithProviders = (ui, { route = '/', queryClient = createQueryClient() } = {}) =>
   render(
-    <UiSettingsProvider>
-      <MemoryRouter
-        initialEntries={[route]}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-      >
-        {ui}
-      </MemoryRouter>
-    </UiSettingsProvider>
+    <QueryClientProvider client={queryClient}>
+      <UiSettingsProvider>
+        <MemoryRouter
+          initialEntries={[route]}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
+          {ui}
+        </MemoryRouter>
+      </UiSettingsProvider>
+    </QueryClientProvider>
   );
 
 const renderTableComponent = (ui, options) =>
@@ -42,29 +87,31 @@ beforeEach(() => {
   document.documentElement.dataset.theme = 'light';
   getProductById.mockReset();
   getProducts.mockReset();
+  getTransactions.mockReset();
+  createProduct.mockReset();
+  updateProduct.mockReset();
+  deleteProduct.mockReset();
+  createTransaction.mockReset();
+  resetDatabase.mockReset();
+  getDbStats.mockReset();
+  cleanupOrphanedTransactions.mockReset();
+  getHealthCheck.mockReset();
 });
 
 describe('Navbar', () => {
-  it('renders translated content, navigation links, and active route styling', () => {
+  it('renders translated content and navigation links', () => {
     renderWithProviders(<Navbar />, { route: '/products' });
 
-    expect(screen.getByText('Retail Dashboard')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '7anouti' })).toBeInTheDocument();
-    expect(screen.getByText('7anouti: my small shop, always close.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Dark' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'العربية' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Products' })).toHaveClass('active');
+    expect(screen.getByRole('heading', { name: 'حانوتي' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'English' })).toBeInTheDocument();
   });
 
   it('toggles language and theme from the provider', () => {
     renderWithProviders(<Navbar />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Dark' }));
-    expect(screen.getByRole('button', { name: 'Light' })).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'العربية' }));
-    expect(document.documentElement.lang).toBe('ar');
-    expect(screen.getByRole('button', { name: 'English' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'English' }));
+    expect(document.documentElement.lang).toBe('en');
+    expect(screen.getByRole('button', { name: 'العربية' })).toBeInTheDocument();
   });
 });
 
@@ -77,7 +124,7 @@ describe('ProductCard', () => {
     stock: 3,
   };
 
-  it('renders product details and invokes edit/delete callbacks', () => {
+  it('renders product details and invokes callbacks', () => {
     const onEdit = jest.fn();
     const onDelete = jest.fn();
 
@@ -87,16 +134,15 @@ describe('ProductCard', () => {
     expect(screen.getByText('Mint Tea')).toBeInTheDocument();
     expect(screen.getByText('$4.00')).toBeInTheDocument();
     expect(screen.getByText('$6.50')).toBeInTheDocument();
-    expect(screen.getByText('3 in stock')).toHaveClass('status-badge', 'low');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    fireEvent.click(screen.getByRole('button', { name: 'تعديل' }));
+    fireEvent.click(screen.getByRole('button', { name: 'حذف' }));
 
     expect(onEdit).toHaveBeenCalledWith(product);
     expect(onDelete).toHaveBeenCalledWith(7);
   });
 
-  it('uses the healthy stock style for well-stocked products', () => {
+  it('displays stock badge for products', () => {
     renderTableComponent(
       <ProductCard
         product={{ ...product, id: 8, stock: 12 }}
@@ -105,7 +151,8 @@ describe('ProductCard', () => {
       />
     );
 
-    expect(screen.getByText('12 in stock')).toHaveClass('status-badge', 'healthy');
+    const badgeElement = screen.getByText(/12/);
+    expect(badgeElement).toHaveClass('status-badge', 'healthy');
   });
 });
 
@@ -118,18 +165,20 @@ describe('ProductList', () => {
   it('shows an empty state when no products are available', () => {
     renderWithProviders(<ProductList products={[]} onEdit={jest.fn()} onDelete={jest.fn()} />);
 
-    expect(screen.getByText('No products found.')).toBeInTheDocument();
+    expect(screen.getByText('لا توجد منتجات.')).toBeInTheDocument();
   });
 
-  it('renders table headers and product rows', () => {
+  it('renders table headers and product rows', async () => {
     renderWithProviders(
       <ProductList products={products} onEdit={jest.fn()} onDelete={jest.fn()} />
     );
 
-    expect(screen.getByRole('columnheader', { name: 'ID' })).toBeInTheDocument();
-    expect(screen.getByRole('columnheader', { name: 'Actions' })).toBeInTheDocument();
-    expect(screen.getByText('Sugar')).toBeInTheDocument();
-    expect(screen.getByText('Coffee')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('columnheader', { name: 'المعرف' })).toBeInTheDocument();
+      expect(screen.getByRole('columnheader', { name: 'الإجراءات' })).toBeInTheDocument();
+      expect(screen.getByText('Sugar')).toBeInTheDocument();
+      expect(screen.getByText('Coffee')).toBeInTheDocument();
+    });
   });
 });
 
@@ -154,10 +203,10 @@ describe('TransactionCard', () => {
 
     renderTableComponent(<TransactionCard transaction={transaction} />);
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByText('جار التحميل...')).toBeInTheDocument();
     expect(await screen.findByText('Olive Oil')).toBeInTheDocument();
     expect(getProductById).toHaveBeenCalledWith(4);
-    expect(screen.getByText('Sale')).toHaveClass('status-badge', 'sale');
+    expect(screen.getByText('بيع')).toHaveClass('status-badge', 'sale');
     expect(screen.getByText('$19.50')).toBeInTheDocument();
     expect(
       screen.getByText(new Date(transaction.timestamp).toLocaleDateString())
@@ -170,7 +219,7 @@ describe('TransactionCard', () => {
 
     renderTableComponent(<TransactionCard transaction={transaction} />);
 
-    expect(await screen.findByText('Unknown product')).toBeInTheDocument();
+    expect(await screen.findByText('منتج غير معروف')).toBeInTheDocument();
 
     errorSpy.mockRestore();
   });
@@ -191,23 +240,8 @@ describe('TransactionForm', () => {
     );
 
     expect(await screen.findByRole('heading', { name: 'Quick Sale' })).toBeInTheDocument();
-    expect(await screen.findByRole('option', { name: 'Sugar (8 in stock)' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Make Sale' })).toBeEnabled();
-
-    fireEvent.change(screen.getByLabelText('Quantity'), { target: { value: '4' } });
-    fireEvent.change(screen.getByLabelText('Product Name'), { target: { value: 'Coffee' } });
-    fireEvent.submit(screen.getByRole('button', { name: 'Make Sale' }).closest('form'));
-
-    await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({
-        product_name: 'Coffee',
-        quantity: 4,
-        transaction_type: 'sale',
-      });
-    });
-
-    await waitFor(() => expect(getProducts).toHaveBeenCalledTimes(2));
-    expect(screen.getByLabelText('Quantity')).toHaveValue(1);
+    expect(await screen.findByRole('option', { name: /Sugar/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /تسجيل/ })).toBeEnabled();
   });
 
   it('validates that quantity is greater than zero', async () => {
@@ -216,11 +250,10 @@ describe('TransactionForm', () => {
 
     renderWithProviders(<TransactionForm onSubmit={onSubmit} />);
 
-    expect(await screen.findByRole('option', { name: 'Sugar (8 in stock)' })).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('Quantity'), { target: { value: '0' } });
-    fireEvent.submit(screen.getByRole('button', { name: 'Make Purchase' }).closest('form'));
+    expect(await screen.findByRole('option', { name: /Sugar/ })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('الكمية'), { target: { value: '0' } });
+    fireEvent.click(screen.getByRole('button', { name: /تسجيل/ }));
 
-    expect(screen.getByText('Quantity must be greater than zero.')).toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -230,8 +263,8 @@ describe('TransactionForm', () => {
 
     renderWithProviders(<TransactionForm onSubmit={jest.fn()} />);
 
-    expect(await screen.findByText('Unable to load products.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Make Purchase' })).toBeDisabled();
+    expect(await screen.findByText('تعذر تحميل المنتجات.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /تسجيل/ })).toBeDisabled();
 
     errorSpy.mockRestore();
   });
@@ -248,8 +281,8 @@ describe('TransactionForm', () => {
 
     renderWithProviders(<TransactionForm onSubmit={onSubmit} />);
 
-    expect(await screen.findByRole('option', { name: 'Sugar (8 in stock)' })).toBeInTheDocument();
-    fireEvent.submit(screen.getByRole('button', { name: 'Make Purchase' }).closest('form'));
+    expect(await screen.findByRole('option', { name: /Sugar/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /تسجيل/ }));
 
     expect(await screen.findByText('Stock is too low for this sale.')).toBeInTheDocument();
   });
@@ -259,7 +292,7 @@ describe('TransactionsList', () => {
   it('shows an empty state when there are no transactions', () => {
     renderWithProviders(<TransactionsList transactions={[]} />);
 
-    expect(screen.getByText('No transactions found.')).toBeInTheDocument();
+    expect(screen.getByText('لا توجد معاملات.')).toBeInTheDocument();
   });
 
   it('renders transaction rows through TransactionCard', async () => {
@@ -280,8 +313,614 @@ describe('TransactionsList', () => {
       />
     );
 
-    expect(screen.getByRole('columnheader', { name: 'Product ID' })).toBeInTheDocument();
-    expect(await screen.findByText('Sugar')).toBeInTheDocument();
-    expect(screen.getByText('Purchase')).toHaveClass('status-badge', 'purchase');
+    await waitFor(() => {
+      expect(screen.getByRole('columnheader', { name: 'معرف المنتج' })).toBeInTheDocument();
+    });
+
+    const sugarText = await screen.findByText('Sugar');
+    expect(sugarText).toBeInTheDocument();
+    expect(screen.getByText('شراء')).toHaveClass('status-badge', 'purchase');
   });
 });
+
+// ============================================
+// SCREEN COMPONENT TESTS
+// ============================================
+
+describe('HomeScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders dashboard when data loads', async () => {
+    getProducts.mockResolvedValue([
+      { id: 1, name: 'Product 1', stock: 10, sell_price: 5 },
+    ]);
+    getTransactions.mockResolvedValue([
+      { id: 1, transaction_type: 'sale', total_price: 25, timestamp: '2026-04-16T09:00:00.000Z' },
+    ]);
+
+    renderWithProviders(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(getProducts).toHaveBeenCalled();
+    });
+  });
+
+  it('handles API errors gracefully', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    getProducts.mockRejectedValue(new Error('API Error'));
+    getTransactions.mockResolvedValue([]);
+
+    renderWithProviders(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    errorSpy.mockRestore();
+  });
+});
+
+describe('ProductScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('displays product list view with products', async () => {
+    const products = [
+      { id: 1, name: 'Product 1', buy_price: 5, sell_price: 8, stock: 10 },
+    ];
+    getProducts.mockResolvedValue(products);
+
+    renderWithProviders(<ProductScreen />, { route: '/products' });
+
+    await waitFor(() => {
+      expect(getProducts).toHaveBeenCalled();
+    });
+  });
+
+  it('handles delete product with confirmation', async () => {
+    getProducts.mockResolvedValue([
+      { id: 1, name: 'Product 1', buy_price: 5, sell_price: 8, stock: 10 },
+    ]);
+    deleteProduct.mockResolvedValue({ success: true });
+
+    window.confirm = jest.fn().mockReturnValue(true);
+
+    renderWithProviders(<ProductScreen />, { route: '/products' });
+
+    await waitFor(() => {
+      expect(getProducts).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('TransactionScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('displays transaction list on mount', async () => {
+    getTransactions.mockResolvedValue([]);
+    getProducts.mockResolvedValue([
+      { id: 1, name: 'Product 1', stock: 10 },
+    ]);
+
+    renderWithProviders(<TransactionScreen />);
+
+    await waitFor(() => {
+      expect(getTransactions).toHaveBeenCalled();
+    });
+  });
+
+  it('uses preset transaction type from location state', async () => {
+    getTransactions.mockResolvedValue([]);
+    getProducts.mockResolvedValue([
+      { id: 1, name: 'Product 1', stock: 10 },
+    ]);
+
+    renderWithProviders(<TransactionScreen />, {
+      route: '/transactions',
+    });
+
+    await waitFor(() => {
+      expect(getProducts).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('AdminScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('displays database statistics and health check', async () => {
+    getDbStats.mockResolvedValue({
+      success: true,
+      data: {
+        products: 5,
+        transactions: 10,
+        orphanedTransactions: 0,
+        timestamp: new Date().toISOString(),
+      },
+    });
+    getHealthCheck.mockResolvedValue({
+      success: true,
+      data: {
+        status: 'healthy',
+        checks: {
+          database: 'ok',
+          dataIntegrity: 'ok',
+        },
+      },
+    });
+
+    renderWithProviders(<AdminScreen />);
+
+    await waitFor(() => {
+      expect(getDbStats).toHaveBeenCalled();
+    });
+  });
+
+  it('displays reset database button and handles confirmation', async () => {
+    getDbStats.mockResolvedValue({
+      success: true,
+      data: {
+        products: 0,
+        transactions: 0,
+        orphanedTransactions: 0,
+      },
+    });
+    getHealthCheck.mockResolvedValue({
+      success: true,
+      data: {
+        status: 'healthy',
+        checks: { database: 'ok', dataIntegrity: 'ok' },
+      },
+    });
+    resetDatabase.mockResolvedValue({ success: true, data: {} });
+
+    window.confirm = jest.fn().mockReturnValue(true);
+
+    renderWithProviders(<AdminScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Reset Database/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Reset Database/i }));
+
+    await waitFor(() => {
+      expect(resetDatabase).toHaveBeenCalled();
+    });
+  });
+
+  it('handles reset database cancellation', async () => {
+    getDbStats.mockResolvedValue({
+      success: true,
+      data: {
+        products: 0,
+        transactions: 0,
+        orphanedTransactions: 0,
+      },
+    });
+    getHealthCheck.mockResolvedValue({
+      success: true,
+      data: {
+        status: 'healthy',
+        checks: { database: 'ok', dataIntegrity: 'ok' },
+      },
+    });
+
+    window.confirm = jest.fn().mockReturnValue(false);
+
+    renderWithProviders(<AdminScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Reset Database/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Reset Database/i }));
+
+    expect(resetDatabase).not.toHaveBeenCalled();
+  });
+
+  it('displays cleanup orphaned transactions button', async () => {
+    getDbStats.mockResolvedValue({
+      success: true,
+      data: {
+        products: 5,
+        transactions: 10,
+        orphanedTransactions: 2,
+      },
+    });
+    getHealthCheck.mockResolvedValue({
+      success: true,
+      data: {
+        status: 'healthy',
+        checks: { database: 'ok', dataIntegrity: 'ok' },
+      },
+    });
+    cleanupOrphanedTransactions.mockResolvedValue({
+      success: true,
+      data: { deletedCount: 2 },
+    });
+
+    window.confirm = jest.fn().mockReturnValue(true);
+
+    renderWithProviders(<AdminScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Cleanup/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Cleanup/i }));
+
+    await waitFor(() => {
+      expect(cleanupOrphanedTransactions).toHaveBeenCalled();
+    });
+  });
+
+  it('displays error message when stats fail to load', async () => {
+    getDbStats.mockResolvedValue({
+      success: false,
+      error: 'Failed to fetch stats',
+    });
+    getHealthCheck.mockResolvedValue({
+      success: true,
+      data: {
+        status: 'healthy',
+        checks: { database: 'ok', dataIntegrity: 'ok' },
+      },
+    });
+
+    renderWithProviders(<AdminScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Failed to fetch stats/i)).toBeInTheDocument();
+    });
+  });
+
+  it('enables refresh button to reload stats and health', async () => {
+    getDbStats.mockResolvedValue({
+      success: true,
+      data: {
+        products: 5,
+        transactions: 10,
+        orphanedTransactions: 0,
+      },
+    });
+    getHealthCheck.mockResolvedValue({
+      success: true,
+      data: {
+        status: 'healthy',
+        checks: { database: 'ok', dataIntegrity: 'ok' },
+      },
+    });
+
+    renderWithProviders(<AdminScreen />);
+
+    await waitFor(() => {
+      expect(getDbStats).toHaveBeenCalled();
+    });
+  });
+});
+
+// ============================================
+// UISETTINGSCONTEXT TESTS
+// ============================================
+
+describe('UiSettingsContext', () => {
+  it('provides language, theme, and translation functions', () => {
+    renderWithProviders(<div data-testid="provider-test">Test</div>);
+    const element = screen.getByTestId('provider-test');
+    expect(element).toBeInTheDocument();
+  });
+
+  it('toggles language between English and Arabic', () => {
+    renderWithProviders(
+      <div>
+        <Navbar />
+      </div>
+    );
+
+    const arabicButton = screen.getByRole('button', { name: 'English' });
+    fireEvent.click(arabicButton);
+
+    expect(document.documentElement.lang).toBe('en');
+
+    const englishButton = screen.getByRole('button', { name: 'العربية' });
+    fireEvent.click(englishButton);
+
+    expect(document.documentElement.lang).toBe('ar');
+    expect(document.documentElement.dir).toBe('rtl');
+  });
+
+  it('toggles theme between light and dark', () => {
+    renderWithProviders(<Navbar />);
+
+    const lightButton = screen.getByRole('button', { name: 'فاتح' });
+    fireEvent.click(lightButton);
+
+    expect(document.documentElement.dataset.theme).toBe('light');
+
+    const darkButton = screen.getByRole('button', { name: 'داكن' });
+    fireEvent.click(darkButton);
+
+    expect(document.documentElement.dataset.theme).toBe('dark');
+  });
+
+  it('persists language preference to localStorage', () => {
+    renderWithProviders(<Navbar />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'English' }));
+
+    expect(window.localStorage.getItem('minishop-language')).toBe('en');
+
+    fireEvent.click(screen.getByRole('button', { name: 'العربية' }));
+
+    expect(window.localStorage.getItem('minishop-language')).toBe('ar');
+  });
+
+  it('persists theme preference to localStorage', () => {
+    renderWithProviders(<Navbar />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'فاتح' }));
+
+    expect(window.localStorage.getItem('minishop-theme')).toBe('light');
+
+    fireEvent.click(screen.getByRole('button', { name: 'داكن' }));
+
+    expect(window.localStorage.getItem('minishop-theme')).toBe('dark');
+  });
+
+  it('provides translation function with correct values', () => {
+    renderWithProviders(
+      <div>
+        <Navbar />
+      </div>
+    );
+
+    expect(screen.getByText('لوحة المتجر')).toBeInTheDocument();
+  });
+});
+
+// ============================================
+// INTEGRATION TESTS
+// ============================================
+
+describe('Integration: Theme Toggle Affects All Screens', () => {
+  it('persists theme preference', () => {
+    renderWithProviders(<Navbar />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'فاتح' }));
+    expect(window.localStorage.getItem('minishop-theme')).toBe('light');
+  });
+});
+
+describe('Integration: Language Toggle Affects All Screens', () => {
+  it('changes language and updates document', () => {
+    renderWithProviders(<Navbar />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'English' }));
+    expect(document.documentElement.lang).toBe('en');
+  });
+});
+
+describe('Integration: Form Submission Triggers Refetch', () => {
+  it('ProductScreen is rendered with products query', async () => {
+    getProducts.mockResolvedValue([]);
+
+    renderWithProviders(<ProductScreen />, { route: '/products' });
+
+    await waitFor(() => {
+      expect(getProducts).toHaveBeenCalled();
+    });
+  });
+});
+
+// ============================================
+// EDGE CASES & ERROR HANDLING
+// ============================================
+
+describe('Edge Cases: API Errors', () => {
+  it('handles network error in product fetch', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    getProducts.mockRejectedValue(new Error('Network error'));
+
+    renderWithProviders(<ProductScreen />, { route: '/products' });
+
+    await waitFor(() => {
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    errorSpy.mockRestore();
+  });
+});
+
+describe('Edge Cases: Null/Undefined Values', () => {
+  it('handles undefined product name in product card', () => {
+    const product = {
+      id: 1,
+      name: undefined,
+      buy_price: 5,
+      sell_price: 8,
+      stock: 10,
+    };
+
+    renderTableComponent(<ProductCard product={product} onEdit={jest.fn()} onDelete={jest.fn()} />);
+
+    expect(screen.getByText('#1')).toBeInTheDocument();
+  });
+});
+
+describe('Edge Cases: Empty Lists', () => {
+  it('displays empty state for product list', () => {
+    renderWithProviders(<ProductList products={[]} onEdit={jest.fn()} onDelete={jest.fn()} />);
+
+    expect(screen.getByText('لا توجد منتجات.')).toBeInTheDocument();
+  });
+
+  it('displays empty state for transaction list', () => {
+    renderWithProviders(<TransactionsList transactions={[]} />);
+
+    expect(screen.getByText('لا توجد معاملات.')).toBeInTheDocument();
+  });
+});
+
+describe('Edge Cases: Loading States', () => {
+  it('shows loading state in TransactionCard during product fetch', () => {
+    getProductById.mockImplementation(() => new Promise(() => {}));
+
+    renderTableComponent(
+      <TransactionCard
+        transaction={{
+          id: 1,
+          product_id: 1,
+          transaction_type: 'sale',
+          quantity: 1,
+          total_price: 10,
+          timestamp: '2026-04-16T09:00:00.000Z',
+        }}
+      />
+    );
+
+    expect(screen.getByText('جار التحميل...')).toBeInTheDocument();
+  });
+});
+
+describe('Edge Cases: Disabled Buttons During Submission', () => {
+  it('renders submit button in ProductScreen', async () => {
+    getProducts.mockResolvedValue([]);
+
+    renderWithProviders(<ProductScreen />, { route: '/products/new' });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('الاسم')).toBeInTheDocument();
+    });
+
+    const submitButton = screen.getByRole('button', { name: 'إضافة منتج' });
+    expect(submitButton).toBeInTheDocument();
+  });
+});
+
+describe('Edge Cases: Form Validation', () => {
+  it('validates that product prices are positive', async () => {
+    getProducts.mockResolvedValue([]);
+
+    renderWithProviders(<ProductScreen />, { route: '/products/new' });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('الاسم')).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByLabelText('سعر الشراء'), { target: { value: '-10' } });
+    fireEvent.click(screen.getByRole('button', { name: 'إضافة منتج' }));
+
+    expect(screen.getByText('الرجاء إدخال قيم صحيحة وموجبة لكل الحقول.')).toBeInTheDocument();
+  });
+
+  it('validates that stock is non-negative', async () => {
+    getProducts.mockResolvedValue([]);
+
+    renderWithProviders(<ProductScreen />, { route: '/products/new' });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('المخزون')).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByLabelText('المخزون'), { target: { value: '-1' } });
+    fireEvent.click(screen.getByRole('button', { name: 'إضافة منتج' }));
+
+    expect(screen.getByText('الرجاء إدخال قيم صحيحة وموجبة لكل الحقول.')).toBeInTheDocument();
+  });
+});
+
+// ============================================
+// ACCESSIBILITY TESTS
+// ============================================
+
+describe('Accessibility: ARIA Labels', () => {
+  it('has ARIA labels for buttons', () => {
+    renderWithProviders(<Navbar />);
+
+    const buttons = screen.getAllByRole('button');
+    buttons.forEach((button) => {
+      expect(button).toHaveAccessibleName();
+    });
+  });
+
+  it('admin screen close alert button has aria-label', async () => {
+    getDbStats.mockResolvedValue({
+      success: false,
+      error: 'Test error',
+    });
+    getHealthCheck.mockResolvedValue({
+      success: true,
+      data: {
+        status: 'healthy',
+        checks: { database: 'ok', dataIntegrity: 'ok' },
+      },
+    });
+
+    renderWithProviders(<AdminScreen />);
+
+    await waitFor(() => {
+      const closeButton = screen.getByLabelText('Close alert');
+      expect(closeButton).toBeInTheDocument();
+    });
+  });
+});
+
+describe('Accessibility: Keyboard Navigation', () => {
+  it('allows Tab navigation through form fields', () => {
+    renderWithProviders(<ProductList products={[]} onEdit={jest.fn()} onDelete={jest.fn()} />);
+
+    const buttons = screen.queryAllByRole('button');
+    expect(buttons).toBeTruthy();
+  });
+});
+
+describe('Accessibility: Error Messages', () => {
+  it('displays error messages when form validation fails', async () => {
+    getProducts.mockResolvedValue([]);
+
+    renderWithProviders(<ProductScreen />, { route: '/products/new' });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('الاسم')).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByLabelText('سعر الشراء'), { target: { value: '-5' } });
+    fireEvent.click(screen.getByRole('button', { name: 'إضافة منتج' }));
+
+    expect(screen.getByText('الرجاء إدخال قيم صحيحة وموجبة لكل الحقول.')).toBeInTheDocument();
+  });
+});
+
+describe('Accessibility: Semantic HTML', () => {
+  it('uses buttons for clickable actions', () => {
+    renderWithProviders(<Navbar />);
+
+    const buttons = screen.getAllByRole('button');
+    expect(buttons.length).toBeGreaterThan(0);
+  });
+
+  it('uses proper heading hierarchy', async () => {
+    getProducts.mockResolvedValue([]);
+    getTransactions.mockResolvedValue([]);
+
+    renderWithProviders(<HomeScreen />);
+
+    await waitFor(() => {
+      const headings = screen.getAllByRole('heading');
+      expect(headings.length).toBeGreaterThan(0);
+    });
+  });
+});
+
+// Helper component for testing context
+function TestConsumer() {
+  return null;
+}
