@@ -13,6 +13,7 @@
  */
 
 const http = require('http');
+const path = require('path');
 
 // Import necessary modules
 const express = require('express'); // Web framework for Node.js
@@ -32,8 +33,17 @@ app.use('/transactions', transactionRoutes); // Route for transaction-related op
 app.use('/api/admin', adminRoutes); // Route for admin operations
 
 // Health check endpoint
-app.get('/', (req, res) => {
+app.get('/healthyBackend', (req, res) => {
   res.json({ message: 'MiniShop backend is running' }); // Respond with a simple JSON message
+});
+
+// serve frontend
+// const __dirname = path.resolve(); // Get the current working directory
+
+app.use(express.static(path.join(__dirname, '../frontend/build'))); // Serve static files from the React build directory
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html')); // Serve the React app for any unmatched routes
 });
 
 let server;
