@@ -10,7 +10,13 @@ MiniShop is a **fully functional web application** for managing small shop inven
 
 **Current Running Environment:**
 - Backend: `http://localhost:3000` (Node.js + Express + SQLite)
-- Frontend: `http://localhost:3001` (React 18 + React Query + React Router)
+- Frontend: built and served from the backend on port `3000`
+- Public Access: ngrok tunnel active for live device testing
+
+**Live Access Status:**
+- Public URL tested in browser
+- Verified on other phones through the ngrok tunnel
+- Home dashboard and admin panel are reading the same live database counts
 
 ---
 
@@ -32,6 +38,14 @@ MiniShop is a **fully functional web application** for managing small shop inven
   - `getDbStats()` - Database statistics
   - `cleanupOrphanedTransactions()` - Cleanup orphaned data
   - `getHealthCheck()` - Health verification
+
+### Live Deployment & Validation ✅ (May 13, 2026)
+- [x] Backend serves the built frontend directly from the production build folder
+- [x] Public ngrok tunnel configured for external access
+- [x] Live browser verification completed
+- [x] Mobile phone testing completed over the public URL
+- [x] Admin statistics aligned with the same live database used by the home dashboard
+- [x] Frontend build succeeds after the latest fixes
 
 - [x] **Admin Styling** (`admin.css`)
   - Professional design with smooth transitions
@@ -220,6 +234,8 @@ For production deployment:
 - [ ] Set up CI/CD pipeline
 - [ ] Run security audit (`npm audit fix`)
 - [ ] Add comprehensive API documentation (Swagger)
+- [ ] Replace the temporary ngrok tunnel with a stable hosting target
+- [ ] Add a release checklist for desktop and mobile smoke tests
 
 ---
 

@@ -2,6 +2,7 @@
 
 **Last Updated**: May 5, 2026  
 **Current Phase**: Phase 1 Complete ✅  
+**Current State**: Deployed and live-tested through ngrok
 **Next Phase**: Phase 2 - Security & Advanced Features
 
 ---
@@ -9,6 +10,8 @@
 ## 🎯 Vision
 
 Transform MiniShop into a **comprehensive inventory and business management system** with enterprise-grade features, security, and scalability.
+
+The application is currently stable in its deployed form, with the home dashboard and admin panel reading the same live database and the public URL verified on desktop and mobile devices.
 
 ---
 
@@ -42,6 +45,12 @@ Phase 4 (FUTURE)
 ---
 
 ## Phase 2: Security & Advanced Features (Q3 2026)
+
+### Current Priorities After Deployment
+- Finish the stable-hosting plan that replaces the temporary ngrok tunnel.
+- Keep the live admin/home data paths aligned with the backend database.
+- Add smoke-test coverage for the public URL on desktop and phones.
+- Preserve the current production-ready behavior while adding new Phase 2 features.
 
 ### 2.1 Authentication & Authorization
 **Estimated Duration**: 2 weeks  

@@ -247,6 +247,14 @@ echo "npm test" > .husky/pre-commit
 
 ## 🧪 Manual Testing Checklist
 
+### Live Deployment Validation
+- [x] Frontend build succeeds in production mode
+- [x] Backend serves the built frontend on port 3000
+- [x] Public ngrok URL opens the app in a browser
+- [x] Home dashboard loads live database data
+- [x] Admin panel shows live database statistics
+- [x] App was tested successfully on other phones through the public URL
+
 ### Backend API Endpoints
 
 **Products:**
