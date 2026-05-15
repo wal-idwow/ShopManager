@@ -15,8 +15,12 @@
 
 const express = require('express'); // Import the Express framework to create a router
 const productController = require('../controllers/productController'); // Import the product controller to handle the business logic for product-related routes
+const { requireAuth } = require('../middleware/authMiddleware'); // Import authentication middleware
 
 const router = express.Router(); // Create a new router instance to define routes for products
+
+// Apply authentication middleware to all product routes
+router.use(requireAuth);
 
 // Define routes for products
 

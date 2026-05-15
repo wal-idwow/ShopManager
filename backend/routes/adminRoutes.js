@@ -20,6 +20,11 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+const { requireAuth, requireAdmin } = require('../middleware/authMiddleware'); // Import auth middleware
+
+// Apply authentication and admin authorization middleware to all admin routes
+router.use(requireAuth);
+router.use(requireAdmin);
 
 const requireAdminAccess = (req, res, next) => {
 	const adminAccessKey = process.env.ADMIN_ACCESS_KEY;

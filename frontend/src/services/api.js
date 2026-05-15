@@ -21,6 +21,20 @@ const api = axios.create({
   baseURL: API_BASE_URL, // Base URL for the backend API
 });
 
+// Interceptor to add JWT token to all requests
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('minishop-token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Export the api instance for use in other modules
 export default api;
 
@@ -139,6 +153,52 @@ export const getTransactionById = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching transaction:', error);
+    throw error;
+  }
+};
+
+/**
+ * Register a new user account
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @returns {Promise<Object>} - Response with token and user data
+ */
+export const register = async (email, password) => {
+  try {
+    const response = await api.post('/auth/register', { email, password });
+    return response.data;
+  } catch (error) {
+    console.error('Error during registration:', error);
+    throw error;
+  }
+};
+
+/**
+ * Login user with email and password
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @returns {Promise<Object>} - Response with token and user data
+ */
+export const login = async (email, password) => {
+  try {
+    const response = await api.post('/auth/login', { email, password });
+    return response.data;
+  } catch (error) {
+    console.error('Error during login:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get current authenticated user info
+ * @returns {Promise<Object>} - Current user data
+ */
+export const getCurrentUser = async () => {
+  try {
+    const response = await api.get('/auth/me');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching current user:', error);
     throw error;
   }
 };

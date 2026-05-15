@@ -17,6 +17,7 @@
 
 const Database = require('better-sqlite3');
 const path = require('path');
+const bcrypt = require('bcrypt');
 const dbPath = path.resolve(__dirname, 'minishop.db');
 
 // Validate database path
@@ -49,6 +50,7 @@ initializeDatabase();
 // Function to initialize the database
 function initializeDatabase() {
   createTables(); // Create necessary tables
+  seedDefaultAdmin(); // Seed default admin user
   // populateProducts(); // Uncomment to populate sample data
   // populateTransactions();
 }
@@ -79,11 +81,24 @@ function createTables() {
         );
     `;
 
+  const createUsersTable = `
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user', 'admin')),
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
   db.exec(createProductsTable);
   console.log('Products table created or already exists.');
 
   db.exec(createTransactionsTable);
   console.log('Transactions table created or already exists.');
+
+  db.exec(createUsersTable);
+  console.log('Users table created or already exists.');
 }
 
 // Function to populate the database with products
@@ -103,7 +118,58 @@ function populateProducts() {
     console.log('Sample product inserted or skipped:', product);
   });
 }
+/**
+ * Hash a password using bcrypt (10 rounds)
+ * Uses synchronous version for database initialization
+ * @param {string} password - The plain text password
+ * @returns {string} - The bcrypt hashed password
+ */
+function hashPassword(password) {
+  return bcrypt.hashSync(password, 10);
+}
 
+/**
+ * Verify a password against its bcrypt hash
+ * Uses synchronous version for simple verification
+ * @param {string} password - The plain text password to verify
+ * @param {string} passwordHash - The bcrypt hash
+ * @returns {boolean} - True if password matches, false otherwise
+ */
+function verifyPassword(password, passwordHash) {
+  return bcrypt.compareSync(password, passwordHash);
+}
+
+/**
+ * Seed default admin user if no users exist
+ */
+function seedDefaultAdmin() {
+  try {
+    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get();
+
+    if (userCount.count === 0) {
+      const defaultAdmin = {
+        email: 'admin@local',
+        password: 'admin123',
+        role: 'admin',
+      };
+
+      const passwordHash = hashPassword(defaultAdmin.password);
+
+      const insertAdmin = db.prepare(
+        'INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)'
+      );
+
+      insertAdmin.run(defaultAdmin.email, passwordHash, defaultAdmin.role);
+      console.log(
+        `Default admin user created: ${defaultAdmin.email} (use password: ${defaultAdmin.password})`
+      );
+    } else {
+      console.log('Users table already has records. Skipping seed.');
+    }
+  } catch (err) {
+    console.error('Error seeding default admin user:', err.message);
+  }
+}
 // Function to populate the database with transactions
 function populateTransactions() {
   const transactions = [
@@ -243,3 +309,6 @@ module.exports = db;
 module.exports.resetDatabase = resetDatabase;
 module.exports.getDbStats = getDbStats;
 module.exports.cleanupOrphanedTransactions = cleanupOrphanedTransactions;
+module.exports.hashPassword = hashPassword;
+module.exports.verifyPassword = verifyPassword;
+module.exports.seedDefaultAdmin = seedDefaultAdmin;

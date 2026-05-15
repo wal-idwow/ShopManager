@@ -13,8 +13,12 @@
 
 const express = require('express');
 const transactionController = require('../controllers/transactionController'); // Import the transaction controller to handle the business logic for transaction-related routes
+const { requireAuth } = require('../middleware/authMiddleware'); // Import authentication middleware
 
 const router = express.Router(); // Create a new router instance to define routes for transactions
+
+// Apply authentication middleware to all transaction routes
+router.use(requireAuth);
 
 // Define routes for transactions
 

@@ -2,15 +2,15 @@
  * HomeScreen Component
  *
  * Responsibilities:
- * - Serve as the landing page for the Mini Shop application.
- * - Present the main application features and role-based entry points.
- * - Display key metrics such as product count, total stock, and transaction count.
- * - Highlight low-stock products and recent transactions.
+ * - Serve as the landing page for authenticated users
+ * - Display dashboard with inventory and transaction summaries
+ * - Show product stats and recent transactions
  *
  * Features:
- * - Fetch and display product and transaction data from the API.
- * - Calculate and display total stock and low-stock products.
- * - Render a dashboard with inventory and transaction summaries.
+ * - Shows landing page for unauthenticated users
+ * - Shows dashboard for authenticated users
+ * - Display low-stock warnings
+ * - Render recent transactions
  */
 
 import React from 'react';
@@ -30,14 +30,19 @@ const featureCards = [
 const HomeScreen = () => {
   const navigate = useNavigate(); // Initialize the navigate function to enable navigation to different routes
   const { t } = useUiSettings(); // Access translation function from UI settings context
-  const { role, loginAs, logout, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [products, setProducts] = React.useState([]); // State to store product data
   const [transactions, setTransactions] = React.useState([]); // State to store transaction data
   const [loading, setLoading] = React.useState(true);
   const [loadError, setLoadError] = React.useState('');
 
-  // Fetch product and transaction data when the component mounts
+  // Fetch product and transaction data when the component mounts (only if authenticated)
   React.useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     const loadDashboard = async () => {
       setLoading(true);
       setLoadError('');
@@ -59,7 +64,7 @@ const HomeScreen = () => {
     };
 
     loadDashboard();
-  }, [t]);
+  }, [isAuthenticated, t]);
 
   // Calculate total stock and identify low-stock products
   const totalStock = products.reduce((sum, product) => sum + Number(product.stock || 0), 0);
@@ -67,82 +72,62 @@ const HomeScreen = () => {
   const lowStockCount = lowStockProducts.length;
   const latestTransactions = transactions.slice(-5).reverse(); // Get the 5 most recent transactions
 
-  const handleEnterRole = (nextRole, targetPath) => {
-    loginAs(nextRole);
-    navigate(targetPath);
-  };
+  // Show landing page for unauthenticated users
+  if (!isAuthenticated) {
+    return (
+      <section className="page-section">
+        <div className="hero-banner landing-hero">
+          <div className="landing-copy">
+            <p className="section-kicker">{t('landingEyebrow')}</p>
+            <h2>{t('landingTitle')}</h2>
+            <p className="hero-copy">{t('landingCopy')}</p>
+            <div className="hero-actions">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => navigate('/login')}
+              >
+                Login
+              </button>
+            </div>
+          </div>
 
+          <aside className="access-card">
+            <p className="section-kicker">{t('accessPortal')}</p>
+            <h3>{t('guestAccount')}</h3>
+            <p>{t('guestAccessCopy')}</p>
+            <ul className="access-list">
+              <li>{t('roleGuest')}</li>
+              <li>{t('roleUser')}</li>
+              <li>{t('roleAdmin')}</li>
+            </ul>
+          </aside>
+        </div>
+
+        <div className="feature-grid">
+          {featureCards.map((feature) => (
+            <article key={feature.key} className="feature-card">
+              <p className="section-kicker">{t(feature.key)}</p>
+              <h3>{t(feature.key)}</h3>
+              <p>{t(feature.copyKey)}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // Show dashboard for authenticated users
   return (
     <section className="page-section">
       {loadError ? <p className="error-banner">{loadError}</p> : null}
 
-      <div className="hero-banner landing-hero">
+      <div className="hero-banner">
         <div className="landing-copy">
-          <p className="section-kicker">{t('landingEyebrow')}</p>
-          <h2>{t('landingTitle')}</h2>
-          <p className="hero-copy">{t('landingCopy')}</p>
-          <div className="hero-actions">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => handleEnterRole('user', '/products')}
-            >
-              {t('continueAsUser')}
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => handleEnterRole('admin', '/admin')}
-            >
-              {t('continueAsAdmin')}
-            </button>
-            {isAuthenticated ? (
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  logout();
-                  navigate('/');
-                }}
-              >
-                {t('signOut')}
-              </button>
-            ) : null}
-          </div>
+          <p className="section-kicker">{t('dashboard')}</p>
+          <h2>{t('dashboardTitle') || 'Welcome Back'}</h2>
+          <p className="hero-copy">{t('dashboardCopy') || 'Here is your inventory overview'}</p>
         </div>
-
-        <aside className="access-card">
-          <p className="section-kicker">{t('accessPortal')}</p>
-          <h3>
-            {role === 'admin'
-              ? t('adminAccount')
-              : role === 'user'
-              ? t('userAccount')
-              : t('guestAccount')}
-          </h3>
-          <p>
-            {role === 'admin'
-              ? t('adminAccessCopy')
-              : role === 'user'
-              ? t('userAccessCopy')
-              : t('guestAccessCopy')}
-          </p>
-          <ul className="access-list">
-            <li>{t('roleGuest')}</li>
-            <li>{t('roleUser')}</li>
-            <li>{t('roleAdmin')}</li>
-          </ul>
-        </aside>
-      </div>
-
-      <div className="feature-grid">
-        {featureCards.map((feature) => (
-          <article key={feature.key} className="feature-card">
-            <p className="section-kicker">{t(feature.key)}</p>
-            <h3>{t(feature.key)}</h3>
-            <p>{t(feature.copyKey)}</p>
-          </article>
-        ))}
       </div>
 
       <div className="stats-grid">

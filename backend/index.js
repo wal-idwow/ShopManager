@@ -15,12 +15,16 @@
 const http = require('http');
 const path = require('path');
 
+// Load environment variables
+require('dotenv').config();
+
 // Import necessary modules
 const express = require('express'); // Web framework for Node.js
 const cors = require('cors'); // Middleware to enable Cross-Origin Resource Sharing
 const productRoutes = require('./routes/productRoutes'); // Import product routes
 const transactionRoutes = require('./routes/transactionRoutes'); // Import transaction routes
 const adminRoutes = require('./routes/adminRoutes'); // Import admin routes
+const authRoutes = require('./routes/authRoutes'); // Import authentication routes
 
 // Create Express application
 const app = express();
@@ -31,6 +35,7 @@ app.use(cors()); // Middleware to enable Cross-Origin Resource Sharing
 app.use('/products', productRoutes); // Route for product-related operations
 app.use('/transactions', transactionRoutes); // Route for transaction-related operations
 app.use('/api/admin', adminRoutes); // Route for admin operations
+app.use('/auth', authRoutes); // Route for authentication operations
 
 // Health check endpoint
 app.get('/healthyBackend', (req, res) => {

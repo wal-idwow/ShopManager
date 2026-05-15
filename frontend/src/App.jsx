@@ -20,15 +20,24 @@ import { BrowserRouter as Router, Navigate, Routes, Route, useLocation } from 'r
 import Navbar from './components/Navbar';
 import { useAuth } from './context/AuthContext';
 import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
 import ProductScreen from './screens/ProductScreen';
 import TransactionScreen from './screens/TransactionScreen';
 import AdminScreen from './screens/AdminScreen';
 
-const RequireRole = ({ allowedRoles, children }) => {
-  const { role } = useAuth();
+/**
+ * ProtectedRoute Component
+ * Checks authentication and optionally role-based access
+ */
+const ProtectedRoute = ({ allowedRoles, children }) => {
+  const { isAuthenticated, role } = useAuth();
   const location = useLocation();
 
-  if (!allowedRoles.includes(role)) {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to="/" replace state={{ from: location.pathname }} />;
   }
 
@@ -42,20 +51,55 @@ const App = () => {
         <Navbar /> {/* Render the Navbar component */}
         <main className="app-main">
           <Routes>
-            {/* Define application routes */}
+            {/* Public routes */}
             <Route path="/" element={<HomeScreen />} />
-            <Route path="/products" element={<ProductScreen />} />
-            <Route path="/products/new" element={<ProductScreen />} />
-            <Route path="/products/edit/:id" element={<ProductScreen />} />
-            <Route path="/transactions" element={<TransactionScreen />} />
+            <Route path="/login" element={<LoginScreen />} />
+
+            {/* Protected routes - require authentication */}
+            <Route
+              path="/products"
+              element={
+                <ProtectedRoute>
+                  <ProductScreen />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/products/new"
+              element={
+                <ProtectedRoute>
+                  <ProductScreen />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/products/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ProductScreen />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <ProtectedRoute>
+                  <TransactionScreen />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin-only routes */}
             <Route
               path="/admin"
               element={
-                <RequireRole allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['admin']}>
                   <AdminScreen />
-                </RequireRole>
+                </ProtectedRoute>
               }
             />
+
+            {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
