@@ -10,7 +10,7 @@
 
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000/api/admin';
+const BASE_URL = `${process.env.REACT_APP_API_URL || ''}/api/admin`;
 
 // Create axios instance with default config
 const adminApi = axios.create({
@@ -49,7 +49,7 @@ export const getDbStats = async () => {
     const response = await adminApi.get('/stats');
     return {
       success: true,
-      data: response.data,
+      data: response.data.data,
     };
   } catch (error) {
     return {

@@ -38,12 +38,14 @@ app.get('/healthyBackend', (req, res) => {
 });
 
 // serve frontend
-// const __dirname = path.resolve(); // Get the current working directory
+const __dirnamePath = path.resolve(); // Get the current working directory
 
-app.use(express.static(path.join(__dirname, '../frontend/build'))); // Serve static files from the React build directory
+// Static files
+app.use(express.static('/home/medal/Shop_Manager/frontend/build')); // Serve static files from the React build directory
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html')); // Serve the React app for any unmatched routes
+// Catch-all (Express 5 safe)
+app.use((req, res) => {
+  res.sendFile('/home/medal/Shop_Manager/frontend/build/index.html'); // Serve the React app for any unmatched routes
 });
 
 let server;

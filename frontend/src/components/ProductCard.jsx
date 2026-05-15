@@ -45,10 +45,20 @@ const ProductCard = ({ product, onDelete, onEdit }) => {
       {/* Display action buttons for editing and deleting the product */}
       <td>
         <div className="table-actions">
-          <button type="button" className="btn btn-secondary" onClick={() => onEdit(product)}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => onEdit(product)}
+            title={`Edit ${product.name}`}
+          >
             {t('edit')}
           </button>
-          <button type="button" className="btn btn-danger" onClick={() => onDelete(product.id)}>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => onDelete(product.id)}
+            title={`Delete ${product.name}`}
+          >
             {t('delete')}
           </button>
         </div>

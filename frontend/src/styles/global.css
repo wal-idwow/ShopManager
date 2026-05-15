@@ -259,6 +259,14 @@ html[data-theme='dark'] .hero-banner {
   gap: 10px;
 }
 
+.list-controls {
+  margin-bottom: 16px;
+}
+
+.list-controls input {
+  max-width: 480px;
+}
+
 .stats-grid,
 .dashboard-grid {
   display: grid;
@@ -351,6 +359,10 @@ html[data-theme='dark'] .stat-card {
 
 .table-shell {
   overflow: hidden;
+}
+
+.table-actions {
+  white-space: nowrap;
 }
 
 .data-table {
@@ -599,9 +611,19 @@ html[dir='rtl'] .hero-copy {
 
   .table-shell {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .data-table {
-    min-width: 760px;
+    min-width: 680px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 10px;
+  }
+
+  .list-controls input {
+    max-width: 100%;
   }
 }

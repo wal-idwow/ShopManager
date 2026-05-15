@@ -217,6 +217,7 @@ const AdminScreen = () => {
                 className="admin-alert-close"
                 onClick={() => setOperationResult(null)}
                 aria-label="Close alert"
+                title="Close message"
               >
                 ×
               </button>
@@ -343,6 +344,7 @@ const AdminScreen = () => {
                     className="admin-btn admin-btn-danger"
                     onClick={handleResetDatabase}
                     disabled={operationLoading}
+                    title="Delete all products and transactions"
                   >
                     {operationLoading ? '⏳ Processing...' : '🗑️ Reset Database'}
                   </button>
@@ -361,6 +363,7 @@ const AdminScreen = () => {
                     className="admin-btn admin-btn-warning"
                     onClick={handleCleanup}
                     disabled={operationLoading}
+                    title="Remove orphaned transactions"
                   >
                     {operationLoading ? '⏳ Processing...' : '🧹 Cleanup'}
                   </button>

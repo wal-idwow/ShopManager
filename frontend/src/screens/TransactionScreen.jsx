@@ -24,8 +24,30 @@ import { useUiSettings } from '../context/UiSettingsContext';
 // TransactionScreen component to manage transactions and display the list of transactions
 const TransactionScreen = () => {
   const [transactions, setTransactions] = useState([]); // State to hold the list of transactions
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation(); // Hook to access the current location and state
   const { t } = useUiSettings(); // Access translation function from UI settings context
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredTransactions = transactions.filter((transaction) => {
+    if (!normalizedQuery) {
+      return true;
+    }
+
+    const searchableText = [
+      transaction.id,
+      transaction.product_id,
+      transaction.product_name,
+      transaction.transaction_type,
+      transaction.quantity,
+      transaction.total_price,
+      transaction.timestamp,
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    return searchableText.includes(normalizedQuery);
+  });
 
   // Fetch transactions when the component mounts
   useEffect(() => {
@@ -61,6 +83,15 @@ const TransactionScreen = () => {
           <h2>{t('transactionList')}</h2>
         </div>
       </div>
+      <div className="list-controls">
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search transactions by product, type, date, or ID"
+          aria-label="Search transactions"
+        />
+      </div>
       {/* Render the TransactionForm component for adding new transactions */}
       <TransactionForm
         onSubmit={handleSubmit}
@@ -68,7 +99,7 @@ const TransactionScreen = () => {
         title={t('addTransaction')}
       />
       {/* Render the TransactionsList component to display the list of transactions */}
-      <TransactionsList transactions={transactions} />
+      <TransactionsList transactions={filteredTransactions} />
     </section>
   );
 };

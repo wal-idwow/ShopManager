@@ -48,7 +48,27 @@ const ProductScreen = () => {
   const [sellPrice, setSellPrice] = useState('');
   const [stock, setStock] = useState('');
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const isListView = location.pathname === '/products';
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredProducts = products.filter((product) => {
+    if (!normalizedQuery) {
+      return true;
+    }
+
+    const searchableText = [
+      product.id,
+      product.name,
+      product.stock,
+      product.buy_price,
+      product.sell_price,
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    return searchableText.includes(normalizedQuery);
+  });
 
   // Fetch product details if in edit mode using React Query
   const { data: editProduct } = useQuery(['product', id], () => getProductById(id), {
@@ -147,12 +167,26 @@ const ProductScreen = () => {
             <p className="section-kicker">{t('inventory')}</p>
             <h2>{t('productList')}</h2>
           </div>
-          <button type="button" className="btn btn-primary" onClick={handleAddProduct}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleAddProduct}
+            title="Add a new product"
+          >
             {t('addProduct')}
           </button>
         </div>
+        <div className="list-controls">
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search products by ID, name, stock, or price"
+            aria-label="Search products"
+          />
+        </div>
         {error && <p className="error-banner">{error}</p>}
-        <ProductList products={products} onDelete={handleDelete} onEdit={handleEdit} />
+        <ProductList products={filteredProducts} onDelete={handleDelete} onEdit={handleEdit} />
       </section>
     );
   }

@@ -4,7 +4,8 @@
   "description": "A simple e-commerce system for managing products and orders",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "tunnel": "npx ngrok http 3000"
   },
   "keywords": [
     "system",

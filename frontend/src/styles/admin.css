@@ -161,6 +161,25 @@
   }
 }
 
+@media (max-width: 720px) {
+  .admin-screen {
+    padding: 1rem;
+  }
+
+  .admin-card-header,
+  .admin-stats,
+  .admin-health,
+  .admin-operations,
+  .admin-info {
+    padding: 1rem;
+  }
+
+  .admin-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
 .admin-left,
 .admin-right {
   display: flex;

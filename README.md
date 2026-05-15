@@ -7,9 +7,19 @@ MiniShop is a full-stack web application designed to manage a small shop's produ
 - **Product Management**: Add, edit, delete, and view products.
 - **Transaction Management**: Record purchase and sale transactions.
 - **Dashboard**: View key metrics such as total stock, low-stock products, and recent transactions.
+- **Admin Panel**: View live database statistics, health checks, and cleanup tools.
 - **Responsive Design**: Optimized for both desktop and mobile devices.
 - **Dark Mode**: Toggle between light and dark themes.
 - **Multilingual Support**: English and Arabic translations.
+
+## Live Deployment
+
+The app is currently deployed and tested through an ngrok public URL for device testing.
+
+- Backend serves the React build directly from `backend/index.js`.
+- The live URL is accessible from phones and other devices through ngrok.
+- Home and admin screens now read from the same live database state.
+- Admin statistics are aligned with the dashboard counts shown on the home page.
 
 ## Project Structure
 
@@ -91,6 +101,23 @@ To start the frontend development server:
    npm start
    ```
 
+### Production-style local run
+
+To verify the deployed setup locally, build the frontend and start the backend server:
+
+```bash
+cd frontend
+npm run build
+cd ..
+node backend/index.js
+```
+
+To expose the app publicly for phone testing:
+
+```bash
+npx ngrok http 3000
+```
+
 ## Testing
 
 ### Backend Tests
@@ -100,12 +127,12 @@ npm test
 ```
 
 ### Frontend Tests
-Frontend tests are planned for future implementation.
+Frontend tests are available and the UI has been verified manually in a browser and on mobile phones through the live ngrok URL.
 
 ## Future Improvements
-- Add frontend tests for better reliability.
-- Enhance the UI with additional features.
-- Implement user authentication for secure access.
+- Add user authentication for secure access.
 - Add more detailed analytics and reporting features.
+- Replace the temporary ngrok tunnel with a stable deployment target.
+- Add automated end-to-end tests for the live deployment path.
 
 

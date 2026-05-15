@@ -214,6 +214,7 @@ const TransactionForm = ({ onSubmit, initialType = 'purchase', title = 'Record T
           type="submit"
           className="btn btn-primary"
           disabled={isSubmitting || products.length === 0}
+          title={type === 'sale' ? 'Record a sale transaction' : 'Record a purchase transaction'}
         >
           {isSubmitting ? t('saving') : type === 'sale' ? t('makeSale') : t('makePurchase')}
         </button>
