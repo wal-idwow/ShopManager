@@ -18,7 +18,6 @@ const db = require('../database/database');
 // Controller function to reset the entire database
 exports.resetDatabase = async (req, res) => {
   try {
-    // Security: Add optional password/token check in production
     const result = db.resetDatabase();
     
     res.status(200).json({
@@ -76,6 +75,7 @@ exports.cleanupOrphanedTransactions = async (req, res) => {
 
 /**
  * Database health check - returns overall database integrity status
+ * Access to these endpoints is controlled at the route layer.
  */
 exports.healthCheck = async (req, res) => {
   try {

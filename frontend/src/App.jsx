@@ -4,6 +4,7 @@
  * Responsibilities:
  * - Serve as the root component of the application.
  * - Define the main layout, including the Navbar and routing structure.
+ * - Enforce role-based access for admin routes.
  * - Render different screens based on the current route.
  *
  * Routes:
@@ -15,12 +16,24 @@
  */
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import necessary components and hooks for routing
+import { BrowserRouter as Router, Navigate, Routes, Route, useLocation } from 'react-router-dom'; // Import necessary components and hooks for routing
 import Navbar from './components/Navbar';
+import { useAuth } from './context/AuthContext';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import TransactionScreen from './screens/TransactionScreen';
 import AdminScreen from './screens/AdminScreen';
+
+const RequireRole = ({ allowedRoles, children }) => {
+  const { role } = useAuth();
+  const location = useLocation();
+
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to="/" replace state={{ from: location.pathname }} />;
+  }
+
+  return children;
+};
 
 const App = () => {
   return (
@@ -35,7 +48,15 @@ const App = () => {
             <Route path="/products/new" element={<ProductScreen />} />
             <Route path="/products/edit/:id" element={<ProductScreen />} />
             <Route path="/transactions" element={<TransactionScreen />} />
-            <Route path="/admin" element={<AdminScreen />} />
+            <Route
+              path="/admin"
+              element={
+                <RequireRole allowedRoles={['admin']}>
+                  <AdminScreen />
+                </RequireRole>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>

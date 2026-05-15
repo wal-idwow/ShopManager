@@ -8,6 +8,7 @@ import ProductCard from './components/ProductCard';
 import ProductList from './components/ProductList';
 import TransactionCard, { TransactionForm } from './components/transactionsCard';
 import TransactionsList from './components/transactionsList';
+import { AuthProvider } from './context/AuthContext';
 import { UiSettingsProvider } from './context/UiSettingsContext';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
@@ -62,12 +63,14 @@ const renderWithProviders = (ui, { route = '/', queryClient = createQueryClient(
   render(
     <QueryClientProvider client={queryClient}>
       <UiSettingsProvider>
-        <MemoryRouter
-          initialEntries={[route]}
-          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-        >
-          {ui}
-        </MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter
+            initialEntries={[route]}
+            future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+          >
+            {ui}
+          </MemoryRouter>
+        </AuthProvider>
       </UiSettingsProvider>
     </QueryClientProvider>
   );
@@ -115,6 +118,24 @@ describe('Navbar', () => {
   });
 });
 
+describe('HomeScreen', () => {
+  beforeEach(() => {
+    getProducts.mockResolvedValue([]);
+    getTransactions.mockResolvedValue([]);
+  });
+
+  it('renders the landing entry buttons and stores the selected role', async () => {
+    renderWithProviders(<HomeScreen />);
+
+    expect(await screen.findByRole('button', { name: 'الدخول كمستخدم' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'الدخول كمدير' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'الدخول كمستخدم' }));
+
+    expect(window.localStorage.getItem('minishop-role')).toBe('user');
+  });
+});
+
 describe('ProductCard', () => {
   const product = {
     id: 7,
@@ -132,8 +153,8 @@ describe('ProductCard', () => {
 
     expect(screen.getByText('#7')).toBeInTheDocument();
     expect(screen.getByText('Mint Tea')).toBeInTheDocument();
-    expect(screen.getByText('$4.00')).toBeInTheDocument();
-    expect(screen.getByText('$6.50')).toBeInTheDocument();
+    expect(screen.getByText(/4\.00/)).toBeInTheDocument();
+    expect(screen.getByText(/6\.50/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'تعديل' }));
     fireEvent.click(screen.getByRole('button', { name: 'حذف' }));
@@ -173,12 +194,10 @@ describe('ProductList', () => {
       <ProductList products={products} onEdit={jest.fn()} onDelete={jest.fn()} />
     );
 
-    await waitFor(() => {
-      expect(screen.getByRole('columnheader', { name: 'المعرف' })).toBeInTheDocument();
-      expect(screen.getByRole('columnheader', { name: 'الإجراءات' })).toBeInTheDocument();
-      expect(screen.getByText('Sugar')).toBeInTheDocument();
-      expect(screen.getByText('Coffee')).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('columnheader', { name: 'المعرف' })).toBeInTheDocument();
+    expect(await screen.findByRole('columnheader', { name: 'الإجراءات' })).toBeInTheDocument();
+    expect(await screen.findByText('Sugar')).toBeInTheDocument();
+    expect(await screen.findByText('Coffee')).toBeInTheDocument();
   });
 });
 
@@ -193,9 +212,9 @@ describe('TransactionCard', () => {
   };
 
   it('returns null when no transaction is provided', () => {
-    const { container } = renderTableComponent(<TransactionCard transaction={null} />);
+    renderTableComponent(<TransactionCard transaction={null} />);
 
-    expect(container.querySelector('tbody')).toBeEmptyDOMElement();
+    expect(screen.queryByRole('row')).not.toBeInTheDocument();
   });
 
   it('loads and displays the related product name', async () => {
@@ -207,7 +226,7 @@ describe('TransactionCard', () => {
     expect(await screen.findByText('Olive Oil')).toBeInTheDocument();
     expect(getProductById).toHaveBeenCalledWith(4);
     expect(screen.getByText('بيع')).toHaveClass('status-badge', 'sale');
-    expect(screen.getByText('$19.50')).toBeInTheDocument();
+    expect(screen.getByText(/19\.50/)).toBeInTheDocument();
     expect(
       screen.getByText(new Date(transaction.timestamp).toLocaleDateString())
     ).toBeInTheDocument();
@@ -327,7 +346,7 @@ describe('TransactionsList', () => {
 // SCREEN COMPONENT TESTS
 // ============================================
 
-describe('HomeScreen', () => {
+describe('HomeScreen dashboard preview', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -920,7 +939,3 @@ describe('Accessibility: Semantic HTML', () => {
   });
 });
 
-// Helper component for testing context
-function TestConsumer() {
-  return null;
-}

@@ -15,6 +15,12 @@ frontend/build/
 *.log
 *.err.log
 backend/database/minishop.db
+.env
+.env.*
+frontend/.env
+frontend/.env.*
+backend/.env
+backend/.env.*
 
 # OS/editor files
 .DS_Store
@@ -33,4 +39,5 @@ NGROK_TUNNEL.md
 TESTING.md
 TODO_plan_26.04.md
 .aider.chat.history.md
-./docs
+docs/
+
