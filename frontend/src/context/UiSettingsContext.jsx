@@ -102,6 +102,7 @@ const translations = {
     confirmDeleteProduct: 'Are you sure you want to delete this product?',
     confirmEditProduct: 'Do you want to edit this product?',
     buyPriceCannotBeGreaterThanSellPrice: 'Buy price cannot be greater than sell price',
+    currency: 'DH'
   },
   ar: {
     appName: 'حانوتي',
@@ -187,6 +188,7 @@ const translations = {
     confirmDeleteProduct: 'هل أنت متأكد من حذف هذا المنتج؟',
     confirmEditProduct: 'هل تريد تعديل هذا المنتج؟',
     buyPriceCannotBeGreaterThanSellPrice: 'سعر الشراء لا يمكن أن يكون أكبر من سعر البيع',
+    currency: 'درهم'
   },
 };
 

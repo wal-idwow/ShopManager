@@ -138,7 +138,7 @@ const HomeScreen = () => {
                 <div>
                   <strong>{product.name}</strong>
                   <p>
-                    ${Number(product.sell_price).toFixed(2)} {t('sellingPrice')}
+                    {t('sellingPrice')}  :  {Number(product.sell_price).toFixed(2)} {t('currency')}
                   </p>
                 </div>
                 <span className={`status-badge ${Number(product.stock) <= 5 ? 'low' : 'healthy'}`}>
@@ -173,7 +173,7 @@ const HomeScreen = () => {
                   </strong>
                   <p>{new Date(transaction.timestamp).toLocaleString()}</p>
                 </div>
-                <span>${Number(transaction.total_price).toFixed(2)}</span>
+                <span>{Number(transaction.total_price).toFixed(2)} {t('currency')}</span>
               </div>
             ))}
           </div>

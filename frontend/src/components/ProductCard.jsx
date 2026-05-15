@@ -30,10 +30,10 @@ const ProductCard = ({ product, onDelete, onEdit }) => {
       <td className="cell-strong">{product.name}</td>
 
       {/* Display product buy price */}
-      <td>${Number(product.buy_price).toFixed(2)}</td>
+      <td>{Number(product.buy_price).toFixed(2)} {t('currency')} </td>
 
       {/* Display product sell price */}
-      <td>${Number(product.sell_price).toFixed(2)}</td>
+      <td>{Number(product.sell_price).toFixed(2)} {t('currency')} </td>
 
       {/* Display product stock with status badge */}
       <td>

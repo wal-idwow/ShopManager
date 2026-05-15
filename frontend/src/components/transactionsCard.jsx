@@ -58,7 +58,7 @@ const TransactionCard = ({ transaction }) => {
         </span>
       </td>
       <td>{transaction.quantity ?? t('notAvailable')}</td>
-      <td>${Number(transaction.total_price ?? 0).toFixed(2)}</td>
+      <td>{Number(transaction.total_price ?? 0).toFixed(2)} {t('currency')}</td>
     </tr>
   );
 };
