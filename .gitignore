@@ -27,17 +27,9 @@ backend/.env.*
 Thumbs.db
 .aider*
 
-# Internagitl planning files (local use only)
-TODO_plan_*.md
-GEMINI.md
-
-# md files
-CURRENT_STATUS.md
-DEVELOPMENT_ROADMAP.md
-DOCUMENTATION_INDEX.md
-NGROK_TUNNEL.md
-TESTING.md
-TODO_plan_26.04.md
-.aider.chat.history.md
+# Documentation and planning files (ignore all except README.md)
+*.md
+!README.md
+*.txt
 docs/
 
