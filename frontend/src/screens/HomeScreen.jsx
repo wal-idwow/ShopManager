@@ -2,242 +2,148 @@
  * HomeScreen Component
  *
  * Responsibilities:
- * - Serve as the landing page for authenticated users
- * - Display dashboard with inventory and transaction summaries
- * - Show product stats and recent transactions
+ * - Serve as a modern landing page for unauthenticated users
+ * - Display hero section with CTA buttons
+ * - Showcase features with modern cards
+ * - Pure UI component - NO routing/redirect logic
  *
  * Features:
- * - Shows landing page for unauthenticated users
- * - Shows dashboard for authenticated users
- * - Display low-stock warnings
- * - Render recent transactions
+ * - Hero section with app name and login/register buttons
+ * - Three feature cards highlighting core functionality
+ * - Responsive design with open-source images
+ * - All navigation delegated to button handlers
+ *
+ * Note:
+ * - Routing guards are handled by PublicRoute wrapper in App.jsx
+ * - This component is NOT responsible for redirecting authenticated users
  */
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook from react-router-dom for programmatic navigation
-import { useAuth } from '../context/AuthContext';
-import { getProducts, getTransactions } from '../services/api';
-import { useUiSettings } from '../context/UiSettingsContext';
+import { useNavigate } from 'react-router-dom';
 
-const featureCards = [
-  { key: 'featureInventory', copyKey: 'featureInventoryCopy' },
-  { key: 'featureTransactions', copyKey: 'featureTransactionsCopy' },
-  { key: 'featureRoles', copyKey: 'featureRolesCopy' },
-  { key: 'featureInsights', copyKey: 'featureInsightsCopy' },
+// Feature definitions for landing page
+const features = [
+  {
+    id: 'products',
+    icon: '📦',
+    title: 'Product Management',
+    description: 'Manage your inventory with ease. Add, edit, and track all your products in one centralized location.',
+    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=300&fit=crop',
+  },
+  {
+    id: 'transactions',
+    icon: '📊',
+    title: 'Transaction Tracking',
+    description: 'Keep detailed records of all your purchases and sales. Monitor every transaction with comprehensive history.',
+    image: 'https://images.unsplash.com/photo-1554224311-beee415c15cb?w=500&h=300&fit=crop',
+  },
+  {
+    id: 'insights',
+    icon: '💡',
+    title: 'Inventory Insights',
+    description: 'Get real-time analytics and insights about your inventory. Make data-driven decisions for your business.',
+    image: 'https://images.unsplash.com/photo-1516534775068-bb555c6feece?w=500&h=300&fit=crop',
+  },
 ];
 
-// HomeScreen component to display the home page with navigation buttons
+/**
+ * HomeScreen component - Landing page UI
+ * 
+ * Pure presentation component with no side effects or routing logic.
+ * All navigation is explicit through onClick handlers.
+ */
 const HomeScreen = () => {
-  const navigate = useNavigate(); // Initialize the navigate function to enable navigation to different routes
-  const { t } = useUiSettings(); // Access translation function from UI settings context
-  const { isAuthenticated } = useAuth();
-  const [products, setProducts] = React.useState([]); // State to store product data
-  const [transactions, setTransactions] = React.useState([]); // State to store transaction data
-  const [loading, setLoading] = React.useState(true);
-  const [loadError, setLoadError] = React.useState('');
-
-  // Fetch product and transaction data when the component mounts (only if authenticated)
-  React.useEffect(() => {
-    if (!isAuthenticated) {
-      setLoading(false);
-      return;
-    }
-
-    const loadDashboard = async () => {
-      setLoading(true);
-      setLoadError('');
-
-      try {
-        const [productData, transactionData] = await Promise.all([
-          getProducts(),
-          getTransactions(),
-        ]);
-
-        setProducts(productData);
-        setTransactions(transactionData);
-      } catch (error) {
-        console.error('Error loading home screen data:', error);
-        setLoadError(t('failedLoadHomeData'));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadDashboard();
-  }, [isAuthenticated, t]);
-
-  // Calculate total stock and identify low-stock products
-  const totalStock = products.reduce((sum, product) => sum + Number(product.stock || 0), 0);
-  const lowStockProducts = products.filter((product) => Number(product.stock) <= 5);
-  const lowStockCount = lowStockProducts.length;
-  const latestTransactions = transactions.slice(-5).reverse(); // Get the 5 most recent transactions
-
-  // Show landing page for unauthenticated users
-  if (!isAuthenticated) {
-    return (
-      <section className="page-section">
-        <div className="hero-banner landing-hero">
-          <div className="landing-copy">
-            <p className="section-kicker">{t('landingEyebrow')}</p>
-            <h2>{t('landingTitle')}</h2>
-            <p className="hero-copy">{t('landingCopy')}</p>
-            <div className="hero-actions">
+  const navigate = useNavigate();
+  // Render landing page for unauthenticated users
+  return (
+    <div className="landing-page">
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="hero-container">
+          <div className="hero-content">
+            <div className="hero-badge">
+              <span>✨ Welcome to</span>
+            </div>
+            <h1 className="hero-title">Shop Manager</h1>
+            <p className="hero-subtitle">
+              Streamline your inventory management with a modern, intuitive platform. 
+              Track products, manage transactions, and gain insights—all in one place.
+            </p>
+            <div className="hero-ctas">
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary btn-lg"
                 onClick={() => navigate('/login')}
               >
-                {t('login')}
+                Log In
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-lg"
+                onClick={() => navigate('/login')}
+              >
+                Create Account
               </button>
             </div>
           </div>
-
-          <aside className="access-card">
-            <p className="section-kicker">{t('accessPortal')}</p>
-            <h3>{t('guestAccount')}</h3>
-            <p>{t('guestAccessCopy')}</p>
-            <ul className="access-list">
-              <li>{t('roleGuest')}</li>
-              <li>{t('roleUser')}</li>
-              <li>{t('roleAdmin')}</li>
-            </ul>
-          </aside>
-        </div>
-
-        <div className="feature-grid">
-          {featureCards.map((feature) => (
-            <article key={feature.key} className="feature-card">
-              <p className="section-kicker">{t(feature.key)}</p>
-              <h3>{t(feature.key)}</h3>
-              <p>{t(feature.copyKey)}</p>
-            </article>
-          ))}
+          <div className="hero-visual">
+            <img 
+              src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=500&fit=crop"
+              alt="Shop Manager Dashboard"
+              className="hero-image"
+            />
+          </div>
         </div>
       </section>
-    );
-  }
 
-  // Show dashboard for authenticated users
-  return (
-    <section className="page-section">
-      {loadError ? <p className="error-banner">{loadError}</p> : null}
+      {/* Features Section */}
+      <section className="features-section">
+        <div className="features-container">
+          <div className="section-header">
+            <h2>Powerful Features for Your Business</h2>
+            <p>Everything you need to manage your shop efficiently</p>
+          </div>
 
-      <div className="hero-banner">
-        <div className="landing-copy">
-          <p className="section-kicker">{t('dashboard')}</p>
-          <h2>{t('dashboardTitle') || 'Welcome Back'}</h2>
-          <p className="hero-copy">{t('dashboardCopy') || 'Here is your inventory overview'}</p>
+          <div className="features-grid">
+            {features.map((feature) => (
+              <article key={feature.id} className="feature-card-modern">
+                <div className="feature-image-wrapper">
+                  <img 
+                    src={feature.image}
+                    alt={feature.title}
+                    className="feature-image"
+                  />
+                  <div className="feature-overlay">
+                    <span className="feature-icon">{feature.icon}</span>
+                  </div>
+                </div>
+                <div className="feature-content">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="stats-grid">
-        {/* Display product count */}
-        <article className="stat-card">
-          <p className="section-kicker">{t('productsCount')}</p>
-          <h3>{products.length}</h3>
-          <span>{t('activeItems')}</span>
-        </article>
-        {/* Display total stock */}
-        <article className="stat-card">
-          <p className="section-kicker">{t('unitsInStock')}</p>
-          <h3>{totalStock}</h3>
-          <span>{t('totalStockText')}</span>
-        </article>
-        {/* Display transaction count */}
-        <article className="stat-card">
-          <p className="section-kicker">{t('transactionsCount')}</p>
-          <h3>{transactions.length}</h3>
-          <span>{t('purchaseSaleRecords')}</span>
-        </article>
-        {/* Display low-stock product count */}
-        <article className="stat-card">
-          <p className="section-kicker">{t('lowStock')}</p>
-          <h3>{lowStockCount}</h3>
-          <span>{t('lowStockText')}</span>
-          <div className="low-stock-names">
-            {lowStockProducts.length > 0 ? (
-              lowStockProducts.map((product) => (
-                <span key={product.id} className="low-stock-pill">
-                  {product.name}
-                </span>
-              ))
-            ) : (
-              <p className="low-stock-empty">{t('noLowStockProducts')}</p>
-            )}
-          </div>
-        </article>
-      </div>
-
-      <div className="dashboard-grid">
-        {/* Inventory snapshot section */}
-        <section className="panel">
-          <div className="panel-heading">
-            <div>
-              <p className="section-kicker">{t('dashboardPreview')}</p>
-              <h2>{t('topProducts')}</h2>
-            </div>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => navigate('/products')}
-            >
-              {t('viewProducts')}
-            </button>
-          </div>
-          <div className="mini-list">
-            {products.slice(0, 5).map((product) => (
-              <div key={product.id} className="mini-list-row">
-                <div>
-                  <strong>{product.name}</strong>
-                  <p>
-                    {t('sellingPrice')} : {Number(product.sell_price).toFixed(2)} {t('currency')}
-                  </p>
-                </div>
-                <span className={`status-badge ${Number(product.stock) <= 5 ? 'low' : 'healthy'}`}>
-                  {product.stock} {t('inStock')}
-                </span>
-              </div>
-            ))}
-            {!loading && products.length === 0 ? <p className="empty-state">{t('noProductsFound')}</p> : null}
-          </div>
-        </section>
-
-        {/* Recent transactions section */}
-        <section className="panel">
-          <div className="panel-heading">
-            <div>
-              <p className="section-kicker">{t('recentActivity')}</p>
-              <h2>{t('latestTransactions')}</h2>
-            </div>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => navigate('/transactions')}
-            >
-              {t('viewTransactions')}
-            </button>
-          </div>
-          <div className="mini-list">
-            {latestTransactions.map((transaction) => (
-              <div key={transaction.id} className="mini-list-row">
-                <div>
-                  <strong>
-                    {transaction.transaction_type === 'sale' ? t('sale') : t('purchase')}
-                  </strong>
-                  <p>{new Date(transaction.timestamp).toLocaleString()}</p>
-                </div>
-                <span>{Number(transaction.total_price).toFixed(2)} {t('currency')}</span>
-              </div>
-            ))}
-            {!loading && latestTransactions.length === 0 ? (
-              <p className="empty-state">{t('noTransactionsFound')}</p>
-            ) : null}
-          </div>
-        </section>
-      </div>
-    </section>
+      {/* CTA Section */}
+      <section className="cta-section">
+        <div className="cta-container">
+          <h2>Ready to Get Started?</h2>
+          <p>Join thousands of shop owners who trust Shop Manager for their inventory needs.</p>
+          <button
+            type="button"
+            className="btn btn-primary btn-lg"
+            onClick={() => navigate('/login')}
+          >
+            Get Started Now
+          </button>
+        </div>
+      </section>
+    </div>
   );
 };
 
-// Export the HomeScreen component as the default export of this module
+// Export the HomeScreen component
 export default HomeScreen;
