@@ -189,3 +189,100 @@ exports.getCurrentUser = async (req, res) => {
     });
   }
 };
+
+/**
+ * Register a new admin user
+ * POST /auth/register-admin
+ * Body: { email, password, adminSecret }
+ * 
+ * Requires ADMIN_REGISTRATION_SECRET environment variable to be set
+ * and match the provided adminSecret
+ */
+exports.registerAdmin = async (req, res) => {
+  try {
+    const { email, password, adminSecret } = req.body;
+    const ADMIN_SECRET = process.env.ADMIN_REGISTRATION_SECRET;
+
+    // Check if admin registration is enabled
+    if (!ADMIN_SECRET) {
+      return res.status(403).json({
+        success: false,
+        error: 'Admin registration is disabled',
+        details: 'ADMIN_REGISTRATION_SECRET is not configured',
+      });
+    }
+
+    // Validate admin secret
+    if (!adminSecret || adminSecret !== ADMIN_SECRET) {
+      return res.status(403).json({
+        success: false,
+        error: 'Invalid admin secret',
+        details: 'The provided admin secret is incorrect',
+      });
+    }
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation failed',
+        details: 'Email and password are required',
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation failed',
+        details: 'Password must be at least 6 characters long',
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = db
+      .prepare('SELECT id FROM users WHERE email = ?')
+      .get(email);
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        error: 'User already exists',
+        details: `Email ${email} is already registered`,
+      });
+    }
+
+    // Hash password with bcrypt
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Insert admin user into database
+    const insertUser = db.prepare(
+      'INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)'
+    );
+
+    const result = insertUser.run(email, passwordHash, 'admin');
+
+    if (result.changes === 0) {
+      throw new Error('Failed to insert admin user');
+    }
+
+    // Generate JWT token
+    const token = generateToken(result.lastInsertRowid, 'admin');
+
+    return res.status(201).json({
+      success: true,
+      data: {
+        userId: result.lastInsertRowid,
+        email,
+        role: 'admin',
+        token,
+      },
+    });
+  } catch (err) {
+    console.error('Error during admin registration:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'Admin registration failed',
+      details: err.message,
+    });
+  }
+};

@@ -52,7 +52,7 @@ const Navbar = () => {
           ) : (
             <>
               <NavLink to="/login" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-                Login
+                {t('login')}
               </NavLink>
             </>
           )}

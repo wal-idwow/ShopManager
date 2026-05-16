@@ -87,7 +87,7 @@ const HomeScreen = () => {
                 className="btn btn-primary"
                 onClick={() => navigate('/login')}
               >
-                Login
+                {t('login')}
               </button>
             </div>
           </div>

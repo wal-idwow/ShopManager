@@ -248,6 +248,10 @@ const AdminScreen = () => {
               ) : stats ? (
                 <div className="admin-stats">
                   <div className="admin-stat-item">
+                    <span className="admin-stat-label">Users:</span>
+                    <span className="admin-stat-value">{stats.users || 0}</span>
+                  </div>
+                  <div className="admin-stat-item">
                     <span className="admin-stat-label">Products:</span>
                     <span className="admin-stat-value">{stats.products || 0}</span>
                   </div>

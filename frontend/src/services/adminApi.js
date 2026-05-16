@@ -20,6 +20,20 @@ const adminApi = axios.create({
   },
 });
 
+// Interceptor to add JWT token to all admin API requests
+adminApi.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('minishop-token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 /**
  * Reset the entire database
  * Clears all products and transactions, resets ID generators

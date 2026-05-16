@@ -250,6 +250,10 @@ function resetDatabase() {
     db.prepare("DELETE FROM sqlite_sequence WHERE name='transactions';").run();
     console.log('✓ Reset auto-increment generators');
     
+    // delete all users except default admin
+    db.prepare("DELETE FROM users WHERE email != 'admin@local';").run();
+    console.log('✓ Cleared non-admin users');
+
     console.log('✅ Database reset complete - ID generators refreshed');
     return { success: true, message: 'Database reset successful' };
   } catch (error) {
@@ -269,11 +273,14 @@ function getDbStats() {
       SELECT COUNT(*) as count FROM transactions t
       WHERE t.product_id NOT IN (SELECT id FROM products);
     `).get();
+    // users count exept default admin
+    const userCount = db.prepare("SELECT COUNT(*) as count FROM users WHERE email != 'admin@local';").get();
     
     return {
       products: productCount.count,
       transactions: transactionCount.count,
       orphanedTransactions: orphanedTransactions.count,
+      users: userCount.count,
       timestamp: new Date().toISOString()
     };
   } catch (error) {

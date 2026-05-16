@@ -17,6 +17,8 @@
 import React from 'react';
 
 const translations = {
+
+  // English translations provided by a native speaker, with attention to context and cultural nuances.
   en: {
     appName: '7anouti',
     appTagline: '7anouti: my small shop, always close.',
@@ -132,8 +134,16 @@ const translations = {
     confirmDeleteProduct: 'Are you sure you want to delete this product?',
     confirmEditProduct: 'Do you want to edit this product?',
     buyPriceCannotBeGreaterThanSellPrice: 'Buy price cannot be greater than sell price',
-    currency: 'DH'
+    currency: 'DH',
+    password: 'Password',
+    login: 'Login',
+    register: 'Register',
+    dontHaveAccount: "Don't have an account ? ",
+    alreadyHaveAccount: 'Already have an account ? ',
+    DemoAdmin: 'Demo for Admin',
   },
+
+// Arabic translations provided by a native speaker, with attention to context and cultural nuances.
   ar: {
     appName: 'حانوتي',
     appTagline: 'حانوتي: دكاني الصغير ديما معايا.',
@@ -248,7 +258,15 @@ const translations = {
     confirmDeleteProduct: 'هل أنت متأكد من حذف هذا المنتج؟',
     confirmEditProduct: 'هل تريد تعديل هذا المنتج؟',
     buyPriceCannotBeGreaterThanSellPrice: 'سعر الشراء لا يمكن أن يكون أكبر من سعر البيع',
-    currency: 'درهم'
+    currency: 'درهم',
+    Email: 'البريد الالكتروني',
+    password: 'كلمة المرور',
+    login: 'تسجيل الدخول',
+    register: 'تسجيل',
+    dontHaveAccount: 'لا تملك حساباً ؟',
+    alreadyHaveAccount: 'هل تملك حساباً بالفعل ؟',
+    DemoAdmin: 'تجريبي للمدير',
+
   },
 };
 
