@@ -129,6 +129,28 @@ npm test
 ### Frontend Tests
 Frontend tests are available and the UI has been verified manually in a browser and on mobile phones through the live ngrok URL.
 
+## Project Context & Current Status
+
+MiniShop already covers the core operational flow for a small shop: inventory management, purchase/sale tracking, and a dashboard/admin view that surfaces live database metrics. The backend exposes REST endpoints backed by SQLite, while the React frontend focuses on day-to-day operations and quick visibility into stock levels. The current deployment approach (backend serving the frontend build, with ngrok for device testing) makes it easy to demo and validate features on real devices.
+
+If the current feature set meets the immediate business needs (inventory tracking, transaction entry, and basic reporting), the project is in a solid "good enough for internal use and demos" stage. The next phase should focus on hardening, automation, and production readiness rather than adding large new features.
+
+## Forward Plan (when the current version is good enough)
+
+1. **Quality & Reliability**
+   - Ensure automated backend and frontend tests pass consistently.
+   - Add CI coverage for tests and linting to catch regressions early.
+   - Document the expected demo dataset and the minimum data needed to validate key flows.
+2. **Security & Access**
+   - Add user authentication and role-based access (admin vs. staff).
+   - Store credentials securely and add password reset or admin bootstrapping guidance.
+3. **Deployment & Operations**
+   - Replace the temporary ngrok tunnel with a stable hosting target.
+   - Add environment-based configuration for database paths, ports, and API URLs.
+4. **Product Enhancements (optional)**
+   - Expand analytics and reporting (profit margins, daily/weekly summaries).
+   - Add automated end-to-end tests for the live deployment path.
+
 ## Future Improvements
 - Add user authentication for secure access.
 - Add more detailed analytics and reporting features.
