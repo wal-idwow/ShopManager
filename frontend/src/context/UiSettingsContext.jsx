@@ -141,7 +141,13 @@ const translations = {
     dontHaveAccount: "Don't have an account ? ",
     alreadyHaveAccount: 'Already have an account ? ',
     DemoAdmin: 'Demo for Admin',
+    welcome: 'Welcome to',
+    welcomingPhrase: 'Streamline your inventory management with a modern, intuitive platform. Track products, manage transactions, and gain insights—all in one place.',
+    homeTitleH2: 'Powerful Features for Your Business',
+    subTitle: 'Everything you need to manage your shop efficiently',
+  
   },
+
 
 // Arabic translations provided by a native speaker, with attention to context and cultural nuances.
   ar: {
@@ -266,7 +272,10 @@ const translations = {
     dontHaveAccount: 'لا تملك حساباً ؟',
     alreadyHaveAccount: 'هل تملك حساباً بالفعل ؟',
     DemoAdmin: 'تجريبي للمدير',
-
+    welcome: 'مرحبا بك في',
+    welcomingPhrase: 'قم بتبسيط إدارة المخزون الخاص بك مع منصة حديثة وبديهية. تتبع المنتجات، إدارة المعاملات، والحصول على رؤى - كل ذلك في مكان واحد.',
+    homeTitleH2: 'ميزات قوية لعملك',
+    subTitle: 'كل ما تحتاجه لإدارة متجرك بكفاءة',
   },
 };
 

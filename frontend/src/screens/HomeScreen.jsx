@@ -19,6 +19,7 @@
  */
 
 import React from 'react';
+import { useUiSettings } from '../context/UiSettingsContext';
 import { useNavigate } from 'react-router-dom';
 
 // Feature definitions for landing page
@@ -54,6 +55,7 @@ const features = [
  */
 const HomeScreen = () => {
   const navigate = useNavigate();
+  const { t } = useUiSettings();
   // Render landing page for unauthenticated users
   return (
     <div className="landing-page">
@@ -62,12 +64,11 @@ const HomeScreen = () => {
         <div className="hero-container">
           <div className="hero-content">
             <div className="hero-badge">
-              <span>✨ Welcome to</span>
+              <span>✨ {t('welcome')} </span>
             </div>
-            <h1 className="hero-title">Shop Manager</h1>
+            <h1 className="hero-title">{t('appName')}</h1>
             <p className="hero-subtitle">
-              Streamline your inventory management with a modern, intuitive platform. 
-              Track products, manage transactions, and gain insights—all in one place.
+              {t('welcomingPhrase')}
             </p>
             <div className="hero-ctas">
               <button
@@ -75,14 +76,14 @@ const HomeScreen = () => {
                 className="btn btn-primary btn-lg"
                 onClick={() => navigate('/login')}
               >
-                Log In
+                {t('login')}
               </button>
               <button
                 type="button"
                 className="btn btn-secondary btn-lg"
                 onClick={() => navigate('/login')}
               >
-                Create Account
+                {t('register')}
               </button>
             </div>
           </div>
@@ -100,8 +101,8 @@ const HomeScreen = () => {
       <section className="features-section">
         <div className="features-container">
           <div className="section-header">
-            <h2>Powerful Features for Your Business</h2>
-            <p>Everything you need to manage your shop efficiently</p>
+            <h2>{t('homeTitleH2')}</h2>
+            <p>{t('subTitle')}</p>
           </div>
 
           <div className="features-grid">

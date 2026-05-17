@@ -21,6 +21,7 @@ const { verifyToken } = require('../utils/jwtHelper');
  */
 function requireAuth(req, res, next) {
   try {
+    // Validate Authorization header
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
@@ -31,6 +32,7 @@ function requireAuth(req, res, next) {
       });
     }
 
+    // Expected format: "Bearer <token>"
     const parts = authHeader.split(' ');
     if (parts.length !== 2 || parts[0] !== 'Bearer') {
       return res.status(401).json({
@@ -40,9 +42,11 @@ function requireAuth(req, res, next) {
       });
     }
 
+    // Verify token and attach user info to request
     const token = parts[1];
 
     try {
+      // Verify token and decode user info
       const decoded = verifyToken(token);
       req.user = decoded; // Attach user info to request
       next();
@@ -53,6 +57,7 @@ function requireAuth(req, res, next) {
         details: err.message,
       });
     }
+    // Note: verifyToken should throw an error if token is invalid or expired
   } catch (err) {
     console.error('Error in requireAuth middleware:', err);
     return res.status(401).json({
@@ -71,6 +76,7 @@ function requireAuth(req, res, next) {
  */
 function requireAdmin(req, res, next) {
   try {
+    // Ensure user is authenticated and req.user is set
     if (!req.user) {
       return res.status(401).json({
         success: false,
@@ -79,6 +85,7 @@ function requireAdmin(req, res, next) {
       });
     }
 
+    // Check if user has admin role
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
@@ -87,7 +94,9 @@ function requireAdmin(req, res, next) {
       });
     }
 
+    // User is admin, proceed to next middleware or route handler
     next();
+    // Note: req.user should have been set by requireAuth middleware, which should be used before this middleware
   } catch (err) {
     console.error('Error in requireAdmin middleware:', err);
     return res.status(403).json({
@@ -98,6 +107,7 @@ function requireAdmin(req, res, next) {
   }
 }
 
+// Export middleware functions for use in route definitions
 module.exports = {
   requireAuth,
   requireAdmin,

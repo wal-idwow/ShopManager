@@ -19,7 +19,7 @@ const db = require('../database/database');
 exports.resetDatabase = async (req, res) => {
   try {
     const result = db.resetDatabase();
-    
+
     res.status(200).json({
       message: 'Database reset successfully',
       details: result,
@@ -27,9 +27,9 @@ exports.resetDatabase = async (req, res) => {
     });
   } catch (err) {
     console.error('Error resetting database:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to reset database',
-      details: err.message 
+      details: err.message
     });
   }
 };
@@ -38,16 +38,16 @@ exports.resetDatabase = async (req, res) => {
 exports.getDbStats = async (req, res) => {
   try {
     const stats = db.getDbStats();
-    
+
     res.status(200).json({
       message: 'Database statistics retrieved',
       data: stats,
     });
   } catch (err) {
     console.error('Error getting database stats:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to retrieve database statistics',
-      details: err.message 
+      details: err.message
     });
   }
 };
@@ -56,7 +56,7 @@ exports.getDbStats = async (req, res) => {
 exports.cleanupOrphanedTransactions = async (req, res) => {
   try {
     const result = db.cleanupOrphanedTransactions();
-    
+
     res.status(200).json({
       message: 'Orphaned transactions cleaned up',
       details: {
@@ -66,9 +66,9 @@ exports.cleanupOrphanedTransactions = async (req, res) => {
     });
   } catch (err) {
     console.error('Error cleaning orphaned transactions:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to cleanup orphaned transactions',
-      details: err.message 
+      details: err.message
     });
   }
 };
@@ -80,10 +80,10 @@ exports.cleanupOrphanedTransactions = async (req, res) => {
 exports.healthCheck = async (req, res) => {
   try {
     const stats = db.getDbStats();
-    
+
     const isHealthy = stats.orphanedTransactions === 0;
     const status = isHealthy ? 'healthy' : 'warning';
-    
+
     res.status(200).json({
       status: status,
       checks: {
