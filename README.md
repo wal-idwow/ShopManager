@@ -152,9 +152,6 @@ If the current feature set meets the immediate business needs (inventory trackin
    - Add automated end-to-end tests for the live deployment path.
 
 ## Future Improvements
-- Add user authentication for secure access.
-- Add more detailed analytics and reporting features.
-- Replace the temporary ngrok tunnel with a stable deployment target.
-- Add automated end-to-end tests for the live deployment path.
+See the **Forward Plan** section above for the prioritized roadmap and next steps.
 
 
