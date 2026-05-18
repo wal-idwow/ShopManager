@@ -10,31 +10,11 @@
  */
 
 import React from 'react';
-import { getProductById, getProducts } from '../services/api';
+import { getProducts } from '../services/api';
 import { useUiSettings } from '../context/UiSettingsContext';
 
 const TransactionCard = ({ transaction }) => {
   const { t } = useUiSettings();
-  const [productName, setProductName] = React.useState('');
-
-  React.useEffect(() => {
-    if (!transaction?.product_id) {
-      setProductName('');
-      return;
-    }
-
-    const fetchProductName = async () => {
-      try {
-        const product = await getProductById(transaction.product_id);
-        setProductName(product.name);
-      } catch (error) {
-        console.error('Error fetching product name:', error);
-        setProductName(t('unknownProduct'));
-      }
-    };
-
-    fetchProductName();
-  }, [transaction?.product_id, t]);
 
   if (!transaction) {
     return null;
@@ -48,7 +28,7 @@ const TransactionCard = ({ transaction }) => {
           ? new Date(transaction.timestamp).toLocaleDateString()
           : t('notAvailable')}
       </td>
-      <td className="cell-strong">{productName || t('loading')}</td>
+      <td className="cell-strong">{transaction.product_name || t('unknownProduct')}</td>
       <td>{transaction.product_id ?? t('notAvailable')}</td>
       <td>
         <span

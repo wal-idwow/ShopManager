@@ -191,6 +191,7 @@ export const login = async (email, password) => {
 
 /**
  * Get current authenticated user info
+ * // GET /auth/me — confirmed implemented
  * @returns {Promise<Object>} - Current user data
  */
 export const getCurrentUser = async () => {

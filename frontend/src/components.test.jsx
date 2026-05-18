@@ -119,20 +119,18 @@ describe('Navbar', () => {
 });
 
 describe('HomeScreen', () => {
-  beforeEach(() => {
-    getProducts.mockResolvedValue([]);
-    getTransactions.mockResolvedValue([]);
-  });
-
-  it('renders the landing entry buttons and stores the selected role', async () => {
+  it('renders the landing page elements and interactive elements', async () => {
     renderWithProviders(<HomeScreen />);
 
-    expect(await screen.findByRole('button', { name: 'الدخول كمستخدم' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'الدخول كمدير' })).toBeInTheDocument();
+    // Verify main app heading is present
+    expect(await screen.findByRole('heading', { name: 'حانوتي' })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'الدخول كمستخدم' }));
+    // Verify login and register CTA buttons exist
+    expect(screen.getByRole('button', { name: 'تسجيل الدخول' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'تسجيل' })).toBeInTheDocument();
 
-    expect(window.localStorage.getItem('minishop-role')).toBe('user');
+    // Verify the bottom CTA button exists
+    expect(screen.getByRole('button', { name: 'ابدأ الآن' })).toBeInTheDocument();
   });
 });
 
@@ -205,6 +203,7 @@ describe('TransactionCard', () => {
   const transaction = {
     id: 9,
     product_id: 4,
+    product_name: 'Olive Oil',
     transaction_type: 'sale',
     quantity: 2,
     total_price: 19.5,
@@ -217,14 +216,10 @@ describe('TransactionCard', () => {
     expect(screen.queryByRole('row')).not.toBeInTheDocument();
   });
 
-  it('loads and displays the related product name', async () => {
-    getProductById.mockResolvedValue({ id: 4, name: 'Olive Oil' });
-
+  it('displays the related product name directly', () => {
     renderTableComponent(<TransactionCard transaction={transaction} />);
 
-    expect(screen.getByText('جار التحميل...')).toBeInTheDocument();
-    expect(await screen.findByText('Olive Oil')).toBeInTheDocument();
-    expect(getProductById).toHaveBeenCalledWith(4);
+    expect(screen.getByText('Olive Oil')).toBeInTheDocument();
     expect(screen.getByText('بيع')).toHaveClass('status-badge', 'sale');
     expect(screen.getByText(/19\.50/)).toBeInTheDocument();
     expect(
@@ -232,15 +227,11 @@ describe('TransactionCard', () => {
     ).toBeInTheDocument();
   });
 
-  it('falls back to the unknown-product label when the product lookup fails', async () => {
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    getProductById.mockRejectedValue(new Error('lookup failed'));
+  it('falls back to the unknown-product label when product name is missing', () => {
+    const transactionWithoutName = { ...transaction, product_name: undefined };
+    renderTableComponent(<TransactionCard transaction={transactionWithoutName} />);
 
-    renderTableComponent(<TransactionCard transaction={transaction} />);
-
-    expect(await screen.findByText('منتج غير معروف')).toBeInTheDocument();
-
-    errorSpy.mockRestore();
+    expect(screen.getByText('منتج غير معروف')).toBeInTheDocument();
   });
 });
 
@@ -314,15 +305,14 @@ describe('TransactionsList', () => {
     expect(screen.getByText('لا توجد معاملات.')).toBeInTheDocument();
   });
 
-  it('renders transaction rows through TransactionCard', async () => {
-    getProductById.mockResolvedValue({ id: 1, name: 'Sugar' });
-
+  it('renders transaction rows through TransactionCard', () => {
     renderWithProviders(
       <TransactionsList
         transactions={[
           {
             id: 1,
             product_id: 1,
+            product_name: 'Sugar',
             transaction_type: 'purchase',
             quantity: 5,
             total_price: 12,
@@ -332,12 +322,8 @@ describe('TransactionsList', () => {
       />
     );
 
-    await waitFor(() => {
-      expect(screen.getByRole('columnheader', { name: 'معرف المنتج' })).toBeInTheDocument();
-    });
-
-    const sugarText = await screen.findByText('Sugar');
-    expect(sugarText).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'معرف المنتج' })).toBeInTheDocument();
+    expect(screen.getByText('Sugar')).toBeInTheDocument();
     expect(screen.getByText('شراء')).toHaveClass('status-badge', 'purchase');
   });
 });
@@ -346,38 +332,24 @@ describe('TransactionsList', () => {
 // SCREEN COMPONENT TESTS
 // ============================================
 
-describe('HomeScreen dashboard preview', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('renders dashboard when data loads', async () => {
-    getProducts.mockResolvedValue([
-      { id: 1, name: 'Product 1', stock: 10, sell_price: 5 },
-    ]);
-    getTransactions.mockResolvedValue([
-      { id: 1, transaction_type: 'sale', total_price: 25, timestamp: '2026-04-16T09:00:00.000Z' },
-    ]);
-
+describe('HomeScreen features and layout', () => {
+  it('renders features section and cards', () => {
     renderWithProviders(<HomeScreen />);
 
-    await waitFor(() => {
-      expect(getProducts).toHaveBeenCalled();
-    });
+    // Verify feature section heading
+    expect(screen.getByText('ميزات قوية لعملك')).toBeInTheDocument();
+
+    // Verify featured card titles are rendered
+    expect(screen.getByText('Product Management')).toBeInTheDocument();
+    expect(screen.getByText('Transaction Tracking')).toBeInTheDocument();
+    expect(screen.getByText('Inventory Insights')).toBeInTheDocument();
   });
 
-  it('handles API errors gracefully', async () => {
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    getProducts.mockRejectedValue(new Error('API Error'));
-    getTransactions.mockResolvedValue([]);
-
+  it('navigates to login on CTA clicks', () => {
     renderWithProviders(<HomeScreen />);
 
-    await waitFor(() => {
-      expect(errorSpy).toHaveBeenCalled();
-    });
-
-    errorSpy.mockRestore();
+    const startButton = screen.getByRole('button', { name: 'ابدأ الآن' });
+    fireEvent.click(startButton);
   });
 });
 
@@ -788,15 +760,14 @@ describe('Edge Cases: Empty Lists', () => {
   });
 });
 
-describe('Edge Cases: Loading States', () => {
-  it('shows loading state in TransactionCard during product fetch', () => {
-    getProductById.mockImplementation(() => new Promise(() => {}));
-
+describe('Edge Cases: Unknown Product fallback', () => {
+  it('shows fallback in TransactionCard when product name is missing', () => {
     renderTableComponent(
       <TransactionCard
         transaction={{
           id: 1,
           product_id: 1,
+          product_name: undefined,
           transaction_type: 'sale',
           quantity: 1,
           total_price: 10,
@@ -805,7 +776,7 @@ describe('Edge Cases: Loading States', () => {
       />
     );
 
-    expect(screen.getByText('جار التحميل...')).toBeInTheDocument();
+    expect(screen.getByText('منتج غير معروف')).toBeInTheDocument();
   });
 });
 

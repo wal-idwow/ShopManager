@@ -135,6 +135,7 @@ const translations = {
     confirmEditProduct: 'Do you want to edit this product?',
     buyPriceCannotBeGreaterThanSellPrice: 'Buy price cannot be greater than sell price',
     currency: 'DH',
+    Email: 'Email',
     password: 'Password',
     login: 'Login',
     register: 'Register',
@@ -145,7 +146,9 @@ const translations = {
     welcomingPhrase: 'Streamline your inventory management with a modern, intuitive platform. Track products, manage transactions, and gain insights—all in one place.',
     homeTitleH2: 'Powerful Features for Your Business',
     subTitle: 'Everything you need to manage your shop efficiently',
-  
+    readyToGetStarted: 'Ready to Get Started?',
+    joinThousands: 'Join thousands of shop owners who trust Shop Manager for their inventory needs.',
+    getStartedNow: 'Get Started Now',
   },
 
 
@@ -276,6 +279,9 @@ const translations = {
     welcomingPhrase: 'قم بتبسيط إدارة المخزون الخاص بك مع منصة حديثة وبديهية. تتبع المنتجات، إدارة المعاملات، والحصول على رؤى - كل ذلك في مكان واحد.',
     homeTitleH2: 'ميزات قوية لعملك',
     subTitle: 'كل ما تحتاجه لإدارة متجرك بكفاءة',
+    readyToGetStarted: 'جاهز للبدء؟',
+    joinThousands: 'انضم إلى آلاف أصحاب المحلات الذين يثقون في حانوتي لإدارة مخزونهم.',
+    getStartedNow: 'ابدأ الآن',
   },
 };
 

@@ -131,14 +131,14 @@ const HomeScreen = () => {
       {/* CTA Section */}
       <section className="cta-section">
         <div className="cta-container">
-          <h2>Ready to Get Started?</h2>
-          <p>Join thousands of shop owners who trust Shop Manager for their inventory needs.</p>
+          <h2>{t('readyToGetStarted')}</h2>
+          <p>{t('joinThousands')}</p>
           <button
             type="button"
             className="btn btn-primary btn-lg"
             onClick={() => navigate('/login')}
           >
-            Get Started Now
+            {t('getStartedNow')}
           </button>
         </div>
       </section>

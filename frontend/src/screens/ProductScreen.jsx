@@ -132,6 +132,11 @@ const ProductScreen = () => {
       return;
     }
 
+    if (parseFloat(buyPrice) > parseFloat(sellPrice)) {
+      setError(t('buyPriceCannotBeGreaterThanSellPrice'));
+      return;
+    }
+
     const productData = {
       name,
       buy_price: parseFloat(buyPrice),
