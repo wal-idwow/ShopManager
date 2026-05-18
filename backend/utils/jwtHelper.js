@@ -13,7 +13,16 @@
 
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+// Validate JWT_SECRET at module load time
+if (!process.env.JWT_SECRET) {
+  console.warn(
+    '⚠️  WARNING: JWT_SECRET environment variable is not set!\n' +
+    'This is a security risk in production. Please set JWT_SECRET in your .env file.\n' +
+    'Using a development fallback secret. This will not work for production deployments.'
+  );
+}
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-fallback-secret-change-in-production';
 const JWT_EXPIRY = process.env.JWT_EXPIRY || '7d'; // Default 7 days
 
 /**
