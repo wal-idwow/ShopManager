@@ -43,14 +43,14 @@ app.get('/healthyBackend', (req, res) => {
 });
 
 // serve frontend
-const __dirnamePath = path.resolve(); // Get the current working directory
+const frontendBuildPath = path.join(__dirname, '../frontend/build'); // Relative path to frontend build
 
 // Static files
-app.use(express.static('/home/medal/Shop_Manager/frontend/build')); // Serve static files from the React build directory
+app.use(express.static(frontendBuildPath)); // Serve static files from the React build directory
 
 // Catch-all (Express 5 safe)
 app.use((req, res) => {
-  res.sendFile('/home/medal/Shop_Manager/frontend/build/index.html'); // Serve the React app for any unmatched routes
+  res.sendFile(path.join(frontendBuildPath, 'index.html')); // Serve the React app for any unmatched routes
 });
 
 let server;
@@ -62,6 +62,15 @@ if (require.main === module) {
 
   server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`); // Log the server start message
+    
+    // Check if JWT_SECRET is properly configured (B1.2)
+    if (!process.env.JWT_SECRET) {
+      console.warn(
+        '⚠️  SECURITY WARNING: JWT_SECRET is not set in environment variables!\n' +
+        'Production deployments MUST set JWT_SECRET before starting the server.\n' +
+        'Using development fallback — this is insecure for production.'
+      );
+    }
   });
 
   server.on('error', (error) => {
